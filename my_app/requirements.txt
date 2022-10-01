@@ -1,0 +1,7 @@
+base64
+pandas
+plotly
+streamlit
+spacy
+annotated_text
+pyautogui
