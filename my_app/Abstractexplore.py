@@ -111,7 +111,7 @@ abs_num=df[df['pmid'] == selected].index[0]
 
 
 doc_title = df['title'].loc[abs_num]
-width, height = pyautogui.size()
+# width, height = pyautogui.size()
 text_input = df['abstract'].loc[abs_num]
 selected_model = models["en"]
 doc = selected_model(text_input)
