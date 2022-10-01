@@ -1,15 +1,14 @@
 
 import pandas as pd  # pip install pandas openpyxl
-import plotly.express as px  # pip install plotly-express
 import streamlit as st  # pip install streamlit
 import spacy
 from annotated_text import annotated_text
 import streamlit.components.v1 as components
-# import pyautogui
+
 
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
-st.set_page_config(page_title="Facial Reanimation Abstracts",
+st.set_page_config(page_title="Facial Reanimation Article Explorer",
                    page_icon="📑", layout="wide")
 
 # ---- READ EXCEL ----
@@ -30,7 +29,7 @@ def get_data_from_csv(source_file):
 
 
 # get_data_from_csv(files[selected_source_file])
-df = get_data_from_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0001 - 30-09-22_Facial-reanimation_data_time-to-reinnervation_v0001.csv')
+df = get_data_from_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv')
 
 
 def process_text(doc):
@@ -164,7 +163,7 @@ with col1:
         df['max age'].loc[abs_num]= max_age_in
         df['follow up min'].loc[abs_num]= min_follow_up_in
         df['follow up max'].loc[abs_num]= max_follow_up_in
-        df.to_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0001 - 30-09-22_Facial-reanimation_data_time-to-reinnervation_v0001.csv', index=False)
+        df.to_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
 
     st.write(pd.DataFrame(get_data()))
 
