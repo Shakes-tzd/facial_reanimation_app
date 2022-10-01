@@ -5,7 +5,7 @@ import streamlit as st  # pip install streamlit
 import spacy
 from annotated_text import annotated_text
 import streamlit.components.v1 as components
-import pyautogui
+# import pyautogui
 
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
