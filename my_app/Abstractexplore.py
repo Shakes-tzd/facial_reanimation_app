@@ -1,15 +1,11 @@
 
-# import base64
 import pandas as pd  # pip install pandas openpyxl
 import plotly.express as px  # pip install plotly-express
 import streamlit as st  # pip install streamlit
 import spacy
 from annotated_text import annotated_text
-from st_aggrid import AgGrid
-from st_aggrid.grid_options_builder import GridOptionsBuilder
 import streamlit.components.v1 as components
 import pyautogui
-from PIL import Image
 
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
@@ -105,22 +101,6 @@ with mid_col:
     st.session_state.current_index = show_next 
     selected=(my_list[st.session_state.current_index])
 
-    
-
-
-
-# # Initialize the current index
-# if "current_index" not in st.session_state:
-#     st.session_state.current_index = inititial
-# # Whenever someone clicks on the button
-# if show_next:
-#     # Show next element in list
-#     selected=(my_list[st.session_state.current_index])
-#     # Update and store the index
-#     st.session_state.current_index += 1
-# if show_previous:
-#     selected=(my_list[st.session_state.current_index])
-#     st.session_state.current_index -= 1
 
 
 models = load_models()
@@ -140,12 +120,7 @@ st.markdown(f"**{doc_title}**")
 height = int(len(text_input) * 0.5) + 10
 annotated_text(*anonymized_tokens)
 col1, col2 = st.columns([1, 3])
-# selected_language = st.sidebar.selectbox("Select a language", options=["en"])
-# selected_entities = st.sidebar.multiselect(
-#     "Select the entities you want to detect",
-#     options=["CARDINAL"],
-#     default=["CARDINAL"],
-# )
+
 with col1:
     
     st.session_state.abs_num=abs_num
@@ -165,14 +140,8 @@ with col1:
     min_follow_up= df['follow up min'].loc[abs_num]
     max_follow_up= df['follow up max'].loc[abs_num]
     
-    # st.markdown(f"**Patients:** {patients}")
+
     st.markdown(f"**PMID**: {pmid}")
-    # st.markdown(f"Min Age: {patients}")
-    # st.markdown(f"Max Age: {patients}")
-    # st.markdown(f"Min Time to Reinnervation: {patients}")
-    # st.markdown(f"Max Time to Reinnervation: {patients}")
-    # st.markdown(f"Min Follow up: {patients}")
-    # st.markdown(f"Max Follow up: {patients}")
     patients = st.number_input('Patients', value=float(patients), min_value=0.0, max_value=1000.0)
     age_in = st.number_input('Age', value=float(age), min_value=0.0, max_value=1000.0)
     min_age_in = st.number_input('Min Age', value=float(min_age), min_value=0.0, max_value=1000.0)
@@ -182,14 +151,6 @@ with col1:
     min_follow_up_in = st.number_input('Min Follow up', value=float(min_follow_up), min_value=0.0, max_value=1000.0)
     max_follow_up_in = st.number_input('Max Follow up', value=float(max_follow_up), min_value=0.0, max_value=1000.0)
     
-
-    # check_patient_num = st.radio(
-    #     'Is the number of patients corect?', ['Correct', 'False'])
-    # if check_patient_num == 'Correct':
-    #     patients = patients
-    # elif check_patient_num == 'False':
-    #     patients = st.number_input(
-    #         'Enter the number of patients', value=0, min_value=0, max_value=1000)
 
     if st.button("Add row"):
         get_data().append(
@@ -220,36 +181,6 @@ with col2:
         st.markdown("# The full text is not available in the folder")
         
 
-    # st.markdown("---")
-    # if selected_source_file == "Doc With Time to Reinnervation":
-
-    #     components.iframe("""https://docs.google.com/spreadsheets/d/1Os3yyAlnmGVTjZ-eG4f3FtTP5ZbzWKniyKSrAKyrwIo/edit?usp=sharing""",
-    #                       height=height)  # width=900, height=1000, frameborder=0, style="border:0;")
-    # else:
-    #     components.iframe("""https://docs.google.com/spreadsheets/d/14NJf825_jJmadywMGofn-AOAThSJrV16/edit?usp=sharing&ouid=108993404693708208578&rtpof=true&sd=true""",
-    #                       height=height)  # width=900, height=1000, frameborder=0, style="border:0;")
-    
-
-    # image = Image.open(pdf)
-
-    # st.image(image)
-    # pdf=f"facial_reanimation_full_text/article_downloads/{pmid}_sci_hub.pdf"
-
-    # def show_pdf(file_path):
-    #     with open(file_path,"rb") as f:
-    #         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-    #     pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="{900}" height="{1200}" type="application/pdf"></iframe>'
-    #     st.markdown(pdf_display, unsafe_allow_html=True)
-
-    # show_pdf(pdf)
-# gb = GridOptionsBuilder.from_dataframe(df)
-# gb.configure_pagination()
-# gb.configure_side_bar()
-# gb.configure_default_column(groupable=True, value=True, enableRowGroup=True, aggFunc="sum", editable=True)
-# gridOptions = gb.build()
-
-
-# AgGrid(df, gridOptions=gridOptions)
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
