@@ -2,5 +2,5 @@ pandas
 plotly
 streamlit
 spacy
-annotated_text
+st-annotated-text
 pyautogui
