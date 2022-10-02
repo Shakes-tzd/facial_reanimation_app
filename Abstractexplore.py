@@ -210,10 +210,10 @@ try:
         var adobeDCView = new AdobeDC.View({clientId: "2e5404e66e0c49e5bd388e52df9bb3a2", divId: "adobe-dc-view"});
         adobeDCView.previewFile(
        {
-          content:   {location: {url:'"""+"https://documentservices.adobe.com/view-sdk-demo/PDFs/Bodea Brochure.pdf" + """'
+          content:   {location: {url:'"""+link2+ """'
           
           }},
-          metaData: {fileName:'""" + "Bodea Brochure.pdf" +"""'
+          metaData: {fileName:'""" + fname +"""'
           
           }
        });
