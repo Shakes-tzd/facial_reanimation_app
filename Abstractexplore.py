@@ -183,6 +183,10 @@ with inp9:
 df_links = pd.read_csv('pdf_file_links_2.csv')
 pdf_link=df_links['link'][df_links['pmid']==pmid].values[0]
 pdf_link_name=df_links['name'][df_links['pmid']==pmid].values[0]
+pdf_link
+pdf_link_name
+link2='https://github.com/Shakes-tzd/facial_reanimation_app/blob/main/1908974_sci_hub.pdf'
+pdf_file_name='1908974_sci_hub.pdf'
 box='https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0'
 fname='1908974_sci_hub.pdf'
 
@@ -200,15 +204,15 @@ try:
 </head>
 <!-- Customize page layout style according to your need and PDF file for best viewing experience -->
 <body style="margin: 100px 0 0 200px;">
-   <div id="adobe-dc-view"></div>
+    <div id="adobe-dc-view" style="height: 360px; width: 500px;"></div>
 <script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
 <script type="text/javascript">
 	document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
 		var adobeDCView = new AdobeDC.View({clientId: "ec53503d261f40cbb2f99bfd276b21d2", divId: "adobe-dc-view"});
 		adobeDCView.previewFile({
-			content:{promise: """+ box + """},
-			metaData:{fileName:  """+fname+ """}
-		}, {});
+            content:{location: {url: '"""+link2+"""'}},
+            metaData:{fileName: '"""+link2+"""'}
+		}, {embedMode: "SIZED_CONTAINER"});
 	});
 </script>
 </body>
@@ -217,6 +221,7 @@ try:
     
     
     components.html(link1,width=900, height=1000)  # width=900, height=1000, frameborder=0, style="border:0;")
+    # components.iframe(link1,width=900, height=1000, frameborder=0, style="border:0;")
 except:
     st.markdown("# The full text is not available in the folder")
         
