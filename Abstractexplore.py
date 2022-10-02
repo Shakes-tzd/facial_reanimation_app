@@ -181,7 +181,10 @@ with inp9:
 # https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0
 # https://www.dropbox.com/s/k5yrxn4ny86x131/1944838_sci_hub.pdf?dl=0
 df_links = pd.read_csv('pdf_file_links_2.csv')
-pdf_link=df_links['link'][df_links['pmid']==pmid].values[0].replace('view','preview')
+pdf_link=df_links['link'][df_links['pmid']==pmid].values[0]
+pdf_link_name=df_links['name'][df_links['pmid']==pmid].values[0]
+box='https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0'
+fname='1908974_sci_hub.pdf'
 
 st.markdown("""---""")    
 try:
@@ -203,8 +206,8 @@ try:
 	document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
 		var adobeDCView = new AdobeDC.View({clientId: "ec53503d261f40cbb2f99bfd276b21d2", divId: "adobe-dc-view"});
 		adobeDCView.previewFile({
-            content:{location: {url: '"""+pdf_link+"""'}},
-            metaData:{fileName: '"""+df_links['name'][df_links['pmid']==pmid].values[0]+"""'}
+            content:{location: {url: '"""+box+"""'}},
+            metaData:{fileName: '"""+fname+"""'}
 		}, {embedMode: "SIZED_CONTAINER"});
 	});
 </script>
@@ -213,7 +216,7 @@ try:
     """
     
     
-    components.html(link1,height=1200)  # width=900, height=1000, frameborder=0, style="border:0;")
+    components.html(link1,width=900, height=1000)  # width=900, height=1000, frameborder=0, style="border:0;")
 except:
     st.markdown("# The full text is not available in the folder")
         
