@@ -92,18 +92,25 @@ pmids=df['pmid'].to_list()
 my_list = pmids
 # sidebar = st.sidebar
 left_col,mid_col,next_col = st.columns([1, 1,1])
+def pmid_to_index():
+    st.session_state.indx = pmids.index(st.session_state.pmid_select)
+def index_to_pmid():
+    st.session_state.pmid_select =my_list[st.session_state.indx]
+    
 with mid_col:
-    pmid_selector = st.selectbox("Select a PMID", pmids)
-    selected=pmid_selector
-    inititial=pmids.index(pmid_selector)
-    show_next =st.number_input('PMID Index', value=pmids.index(pmid_selector))
-    st.session_state.current_index = show_next 
-    selected=(my_list[st.session_state.current_index])
+    pmid_selector = st.selectbox("Select a PMID", pmids,key='pmid_select',on_change =  pmid_to_index)
+
+    # st.session_state['article_index'] = 
+    show_next =st.number_input('PMID Index',  key= "indx", on_change =  index_to_pmid,value=pmids.index(st.session_state.pmid_select))
+    selected=(my_list[show_next])
+    abs_num=df[df['pmid'] == selected].index[0]
+    patients = df['patients'].loc[abs_num]
+    
 
 
 
 models = load_models()
-abs_num=df[df['pmid'] == selected].index[0]
+
 # abs_num = st.number_input("Choose Abstract to Show",value=0, min_value=0, max_value=max(df['pmid'])-1)
 
     
@@ -118,43 +125,47 @@ anonymized_tokens = process_text(doc)
 st.markdown(f"**{doc_title}**")
 height = int(len(text_input) * 0.5) + 10
 annotated_text(*anonymized_tokens)
-col1, col2 = st.columns([1, 3])
+st.session_state.abs_num=abs_num
 
-with col1:
-    
-    st.session_state.abs_num=abs_num
+@st.cache(allow_output_mutation=True)
+def get_data():
+    return []
 
-    @st.cache(allow_output_mutation=True)
-    def get_data():
-        return []
-    
 
-    pmid = df['pmid'].loc[abs_num]
-    patients = df['patients'].loc[abs_num]
-    min_time_to_reinnervation = df['time_to_reinnervation_(min)'].loc[abs_num]
-    max_time_to_reinnervation = df['time_to_reinnervation_(max)'].loc[abs_num]
-    age= df['Age'].loc[abs_num]
-    min_age= df['min age'].loc[abs_num]
-    max_age= df['max age'].loc[abs_num]
-    min_follow_up= df['follow up min'].loc[abs_num]
-    max_follow_up= df['follow up max'].loc[abs_num]
-    
-
-    st.markdown(f"**PMID**: {pmid}")
+pmid = df['pmid'].loc[abs_num]
+min_time_to_reinnervation = df['time_to_reinnervation_(min)'].loc[abs_num]
+max_time_to_reinnervation = df['time_to_reinnervation_(max)'].loc[abs_num]
+age= df['Age'].loc[abs_num]
+min_age= df['min age'].loc[abs_num]
+max_age= df['max age'].loc[abs_num]
+min_follow_up= df['follow up min'].loc[abs_num]
+max_follow_up= df['follow up max'].loc[abs_num]
+st.markdown("""---""")
+inp1, inp2, inp3, inp4, = st.columns(4)
+with inp1:
     patients = st.number_input('Patients', value=float(patients), min_value=0.0, max_value=1000.0)
+with inp2:
     age_in = st.number_input('Age', value=float(age), min_value=0.0, max_value=1000.0)
+with inp3:
     min_age_in = st.number_input('Min Age', value=float(min_age), min_value=0.0, max_value=1000.0)
+with inp4:
     max_age_in = st.number_input('Max Age', value=float(max_age), min_value=0.0, max_value=1000.0)
+inp5, inp6, inp7, inp8,inp9 = st.columns(5)
+with inp5:
     min_time_to_reinnervation_in = st.number_input('Min Time to Reinnervation', value=float(min_time_to_reinnervation), min_value=0.0, max_value=1000.0)
+with inp6:
     max_time_to_reinnervation_in = st.number_input('Max Time to Reinnervation', value=float(max_time_to_reinnervation), min_value=0.0, max_value=1000.0)
+with inp7:
     min_follow_up_in = st.number_input('Min Follow up', value=float(min_follow_up), min_value=0.0, max_value=1000.0)
+with inp8:
     max_follow_up_in = st.number_input('Max Follow up', value=float(max_follow_up), min_value=0.0, max_value=1000.0)
-    
 
-    if st.button("Add row"):
+with inp9:
+    st.write("Save Inputs")
+    if st.button("Save All", key="add",on_click=pmid_to_index):
         get_data().append(
             {"PMID": pmid, "Patients": patients, "Age": age_in, "Min Age": min_age_in, "Max Age": max_age_in, "Min Time to Reinnervation": min_time_to_reinnervation_in, "Max Time to Reinnervation": max_time_to_reinnervation_in, "Min Follow up": min_follow_up_in, "Max Follow up": max_follow_up_in})
-        st.session_state.abs_num += 1
+        # st.session_state.abs_num += 1
         df['patients'].loc[abs_num]=patients
         df['time_to_reinnervation_(min)'].loc[abs_num]=min_time_to_reinnervation_in
         df['time_to_reinnervation_(max)'].loc[abs_num]= max_time_to_reinnervation_in
@@ -164,22 +175,49 @@ with col1:
         df['follow up min'].loc[abs_num]= min_follow_up_in
         df['follow up max'].loc[abs_num]= max_follow_up_in
         df.to_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
+        show_next+=1  
+    
+    
+# https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0
+# https://www.dropbox.com/s/k5yrxn4ny86x131/1944838_sci_hub.pdf?dl=0
+df_links = pd.read_csv('pdf_file_links_2.csv')
+pdf_link=df_links['link'][df_links['pmid']==pmid].values[0].replace('view','preview')
 
-    st.write(pd.DataFrame(get_data()))
-
-
-
-
-with col2:
-    try:
+st.markdown("""---""")    
+try:
+    link1= """
+    <!DOCTYPE html>
+<html>
+<head>
+    <title>Adobe Document Services PDF Embed API Sample</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1"/>
+    <script type="text/javascript" src="index.js"></script>
+</head>
+<!-- Customize page layout style according to your need and PDF file for best viewing experience -->
+<body style="margin: 100px 0 0 200px;">
+    <div id="adobe-dc-view" style="height: 360px; width: 500px;"></div>
+<script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
+<script type="text/javascript">
+	document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
+		var adobeDCView = new AdobeDC.View({clientId: "ec53503d261f40cbb2f99bfd276b21d2", divId: "adobe-dc-view"});
+		adobeDCView.previewFile({
+            content:{location: {url: '"""+pdf_link+"""'}},
+            metaData:{fileName: '"""+df_links['name'][df_links['pmid']==pmid].values[0]+"""'}
+		}, {embedMode: "SIZED_CONTAINER"});
+	});
+</script>
+</body>
+</html>
+    """
+    
+    
+    components.html(link1,height=1200)  # width=900, height=1000, frameborder=0, style="border:0;")
+except:
+    st.markdown("# The full text is not available in the folder")
         
-        df_links = pd.read_csv('pdf_file_links_2.csv')
-        pdf_link=df_links['link'][df_links['pmid']==pmid].values[0].replace('view','preview')
-        components.iframe(pdf_link,height=1200)  # width=900, height=1000, frameborder=0, style="border:0;")
-    except:
-        st.markdown("# The full text is not available in the folder")
-        
-
+st.write(pd.DataFrame(get_data()))
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
