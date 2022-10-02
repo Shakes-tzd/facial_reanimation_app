@@ -192,29 +192,33 @@ fname='1908974_sci_hub.pdf'
 
 st.markdown("""---""")    
 try:
-    link1= """
-    <!DOCTYPE html>
+    link1= """<!--Get the samples from https://www.adobe.com/go/pdfembedapi_samples-->
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Adobe Document Services PDF Embed API Sample</title>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1"/>
-    <script type="text/javascript" src="index.js"></script>
+ <title>Adobe Document Services PDF Embed API Sample</title>
+ <meta charset="utf-8"/>
+ <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+ <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1"/>
 </head>
-<!-- Customize page layout style according to your need and PDF file for best viewing experience -->
-<body style="margin: 100px 0 0 200px;">
-    <div id="adobe-dc-view" style="height: 360px; width: 500px;"></div>
-<script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
-<script type="text/javascript">
-	document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
-		var adobeDCView = new AdobeDC.View({clientId: "ec53503d261f40cbb2f99bfd276b21d2", divId: "adobe-dc-view"});
-		adobeDCView.previewFile({
-            content:{location: {url: '"""+link2+"""'}},
-            metaData:{fileName: '"""+link2+"""'}
-		}, {embedMode: "SIZED_CONTAINER"});
-	});
-</script>
+<body style="margin: 0px">
+ <div id="adobe-dc-view"></div>
+ <script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
+ <script type="text/javascript">
+    document.addEventListener("adobe_dc_view_sdk.ready", function()
+    {
+        var adobeDCView = new AdobeDC.View({clientId: "2e5404e66e0c49e5bd388e52df9bb3a2", divId: "adobe-dc-view"});
+        adobeDCView.previewFile(
+       {
+          content:   {location: {url:'"""+"https://documentservices.adobe.com/view-sdk-demo/PDFs/Bodea Brochure.pdf" + """'
+          
+          }},
+          metaData: {fileName:'""" + "Bodea Brochure.pdf" +"""'
+          
+          }
+       });
+    });
+ </script>
 </body>
 </html>
     """
