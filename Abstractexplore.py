@@ -181,7 +181,7 @@ with inp9:
 # https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0
 # https://www.dropbox.com/s/k5yrxn4ny86x131/1944838_sci_hub.pdf?dl=0
 df_links = pd.read_csv('pdf_file_links_2.csv')
-pdf_link=df_links['link'][df_links['pmid']==pmid].values[0].replace('view?usp=drivesdk','edit')
+pdf_link=df_links['link'][df_links['pmid']==pmid].values[0].replace('/view?usp=drivesdk','/edit?usp=sharing')
 pdf_link_name=df_links['name'][df_links['pmid']==pmid].values[0]
 pdf_link
 pdf_link_name
