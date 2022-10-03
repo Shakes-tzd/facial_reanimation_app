@@ -3,3 +3,4 @@ streamlit
 spacy
 st-annotated-text
 pyautogui
+firebase_admin

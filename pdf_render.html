@@ -20,6 +20,30 @@
 		}, {embedMode: "SIZED_CONTAINER"});
 	});
 </script>
+
+<script type="module">
+	// Import the functions you need from the SDKs you need
+	import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+	import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics.js";
+	// TODO: Add SDKs for Firebase products that you want to use
+	// https://firebase.google.com/docs/web/setup#available-libraries
+  
+	// Your web app's Firebase configuration
+	// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+	const firebaseConfig = {
+	  apiKey: "AIzaSyBT15MG4xY4-WEjPJ0-RDz0KkCffVc0fbg",
+	  authDomain: "facial-reanimation.firebaseapp.com",
+	  projectId: "facial-reanimation",
+	  storageBucket: "facial-reanimation.appspot.com",
+	  messagingSenderId: "944226907706",
+	  appId: "1:944226907706:web:82360a56cec3911935e703",
+	  measurementId: "G-HXVRKRE4KC"
+	};
+  
+	// Initialize Firebase
+	const app = initializeApp(firebaseConfig);
+	const analytics = getAnalytics(app);
+  </script>
 </body>
 </html>
 

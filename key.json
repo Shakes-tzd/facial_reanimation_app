@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "facial-reanimation",
+  "private_key_id": "d77df94309f921f3404ce2a7829081af34917f1a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCcTlWLieruATLd\nbcxy0/WFrnRwBBiFXlEMafq5OvB7Z4lsru98XLTSxP7aLIzxZ3L1viT/yZs3uoTt\nawL4XTUTqjCqAeq8hOwfDNnK9ibWMeDyJr7/yPYIAJVbwarC/swFDpgpYxSXlXdO\n5MKb9gns5CMgVJdkLcASxjPdnVzb5AEqYj877DsTVaOuIuYz3Bg5CppzKzPToKZE\nHwlT5br0ngEXrk4iiuXWcMSld4Eh6WWz7O+NY3TICd0t6cVwXpshP/CNNNmzojI6\n/Q5gsXMT82DI2ZkEhfLXnhSHxzaFrTuY2gWa1S1M3v/ZDFHu+WzAVHuFwx15BWPU\nPOzbaadpAgMBAAECggEAATFjKDOMydUtW/prn07UXplLIKc68vqgkpN0/Miqv1bC\n4JCk7OpHg+owIHHLJhUCNm0SWt4a24kmgx1B10VdcDZCCCwhUqzB7hQJQTB35Nxz\npGys0/Ngg4VfBNi7ERR3fplJMNvfGa/D92ozlrpHgpAa36AE2au0aqUQjh72aSQa\nAgHz31ezujcHg3Cmit2eXSBw0gtPevF2cRhzbUT+nDVK5zRVksLkW/L9no+Aak5n\n2Liw7Gagk3kiIiakatlGv3rGZ7DHnWTbgp2IzwrEEU4yJS4p92Mzz3gGQuqWPHtZ\nyvBeq0EjclG179trKHSl57tJNREPSJ/3/I56v8ooYQKBgQDIuU6hGIiFyawY7Qs+\nd2jkjkQIJ7yYjEJxAu8p79Z4lkJrU89G6UGM1c/kcQOw50yRH6/6O9ehzWLwykBi\nQdJMEldGMm9DmQ6hDbRsfv1jzEhyquFZGvfXu60s3hWsWpUhmvhNjOH3hXiq0Vz5\n42T7xH7pNpIK26T0JB6yU6McSQKBgQDHWaSGQF8hQqwmiui0YfEOaK873l9ubbhF\nRTvwrhIcOUZghkRn3uDZVU8qubG3u/o5M7PEblKtp4PFTpmTWUnP6zxoPrTLvkii\nZpj9GaVDXA6OQ+QV6qvoYHgCmiXZhD9IGWlIkUeLermqjxjcYHzhFTmgGgE65yeK\nopxQEXbyIQKBgQDHEFf1liIXJNnDYprrGXtyZ9D6kYYNd9SQxYsw+QWnU8WNMXH4\nbm4u4QErGhXCBLG/n0BkF6MTeWBtUvelOof4H5xkJrKHxKxodvH/Q7XCmp8i8WtJ\ndmBjmGH3hEzUQIVz7X/hUR3s33a7WaUuwiCtO8NtQEx37jraUVQMILw72QKBgCz1\nLoGIauvZWXGnyitEG1UgjsR1thf1bqVQo9/3oeXzlMeYAD1cqmDZOG1uS4IgRqI3\n4sbeCo9XRARvYXs1m8vkRU9NNQDt/PuDH+WUrwyt6ipzbTD0J6jUeLw9f2O6y3q7\nIF9ZREVUfCLW+shYilFItCJDOxvJncVKPu5fwe+BAoGAfPf2qQpS26MVO/cye7Hq\n8L6EDnAcasJn7fkraE96ZQxMIX/eZfpaXF0d46QWmhGhtFGZzXZqtWwnQpQstTto\nI+XUjNI4AKqnXcf0Yb9FX4ZingVAVS00ou9egEo9cGDagBj+5aMnUsCoDjWGtZfp\nJ2cKf4DmKcy+pLuz0Anoslc=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-4gxd0@facial-reanimation.iam.gserviceaccount.com",
+  "client_id": "109851938649587922918",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4gxd0%40facial-reanimation.iam.gserviceaccount.com"
+}
