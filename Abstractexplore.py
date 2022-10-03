@@ -6,8 +6,10 @@ import streamlit.components.v1 as components
 import firebase_admin
 from firebase_admin import credentials,storage
 cred = credentials.Certificate("key.json")
-app=firebase_admin.initialize_app(cred,{'storageBucket': 'facial-reanimation.appspot.com'})
-bucket= storage.bucket(app=app)
+if 'app' not in st.session_state:
+    st.session_state['app'] = firebase_admin.initialize_app(cred,{'storageBucket': 'facial-reanimation.appspot.com'})
+
+bucket= storage.bucket(app=st.session_state.app)
 files = bucket.list_blobs() # fetch all the files in the bucket
 my_lit={}
 for i in files: 
@@ -190,7 +192,7 @@ with inp9:
 # https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0
 # https://www.dropbox.com/s/k5yrxn4ny86x131/1944838_sci_hub.pdf?dl=0
 df_links = pd.read_csv('pdf_file_links_2.csv')
-pdf_link=df_links['link'][df_links['pmid']==pmid].values[0].replace('/view?usp=drivesdk','/preview')
+pdf_link=my_lit[pmid]
 pdf_link_name=f'{pmid}_sci_hub.pdf'
 pdf_link
 pdf_link_name
