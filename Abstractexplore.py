@@ -1,4 +1,3 @@
-import pyrebase
 import pandas as pd  # pip install pandas openpyxl
 import streamlit as st  # pip install streamlit
 import spacy
