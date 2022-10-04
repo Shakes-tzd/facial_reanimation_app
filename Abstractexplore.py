@@ -5,11 +5,16 @@ from annotated_text import annotated_text
 import streamlit.components.v1 as components
 import firebase_admin
 from firebase_admin import credentials,storage
-cred = credentials.Certificate("key.json")
-if 'app' not in st.session_state:
-    st.session_state['app'] = firebase_admin.initialize_app(cred,{'storageBucket': 'facial-reanimation.appspot.com'})
+if not firebase_admin._apps:
+    cred = credentials.Certificate("key.json")
+    app = firebase_admin.initialize_app(cred,{'storageBucket': 'facial-reanimation.appspot.com'})
+else:
+    app = firebase_admin.get_app()
 
-bucket= storage.bucket(app=st.session_state.app)
+# if 'app' not in st.session_state:
+#     st.session_state['app'] = default_app
+
+bucket= storage.bucket(app=app)
 files = bucket.list_blobs() # fetch all the files in the bucket
 my_lit={}
 for i in files: 
@@ -18,13 +23,14 @@ for i in files:
     file_pmid=file_name.split('_')[0]
     # print(f'{file_pmid}: {i.public_url}')
     my_lit[file_pmid]=i.public_url
+    print(f'{file_pmid}: {i.public_url}')
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Facial Reanimation Article Explorer",
                    page_icon="📑", layout="wide")
 
 # ---- READ EXCEL ----
 
-
+# my_lit
 @st.cache(show_spinner=False, allow_output_mutation=True, suppress_st_warning=True)
 def load_models():
     # french_model = spacy.load("models/fr/")
@@ -192,10 +198,13 @@ with inp9:
 # https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0
 # https://www.dropbox.com/s/k5yrxn4ny86x131/1944838_sci_hub.pdf?dl=0
 df_links = pd.read_csv('pdf_file_links_2.csv')
-pdf_link=my_lit[pmid]
-pdf_link_name=f'{pmid}_sci_hub.pdf'
-pdf_link
-pdf_link_name
+try:
+    pdf_link=my_lit[str(pmid)]
+    pdf_link_name=f'{pmid}_sci_hub.pdf'
+    pdf_link
+    pdf_link_name
+except:
+    print('file not found')
 link2='https://github.com/Shakes-tzd/facial_reanimation_app/blob/main/1908974_sci_hub.pdf'
 pdf_file_name='1908974_sci_hub.pdf'
 box='https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0'
@@ -221,7 +230,7 @@ try:
         var adobeDCView = new AdobeDC.View({clientId: "2e5404e66e0c49e5bd388e52df9bb3a2", divId: "adobe-dc-view"});
         adobeDCView.previewFile(
        {
-          content:   {location: {url:'"""+my_lit[pmid]+ """'
+          content:   {location: {url:'"""+pdf_link+ """'
           
           }},
           metaData: {fileName:'""" + pdf_link_name +"""'
