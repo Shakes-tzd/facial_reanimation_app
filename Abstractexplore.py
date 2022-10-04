@@ -23,7 +23,7 @@ for i in files:
     file_pmid=file_name.split('_')[0]
     # print(f'{file_pmid}: {i.public_url}')
     my_lit[file_pmid]=i.public_url
-    print(f'{file_pmid}: {i.public_url}')
+    # print(f'{file_pmid}: {i.public_url}')
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Facial Reanimation Article Explorer",
                    page_icon="📑", layout="wide")
@@ -198,57 +198,17 @@ with inp9:
 # https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0
 # https://www.dropbox.com/s/k5yrxn4ny86x131/1944838_sci_hub.pdf?dl=0
 df_links = pd.read_csv('pdf_file_links_2.csv')
-try:
-    pdf_link=my_lit[str(pmid)]
-    pdf_link_name=f'{pmid}_sci_hub.pdf'
-    pdf_link
-    pdf_link_name
-except:
-    print('file not found')
-link2='https://github.com/Shakes-tzd/facial_reanimation_app/blob/main/1908974_sci_hub.pdf'
-pdf_file_name='1908974_sci_hub.pdf'
-box='https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0'
-fname='1908974_sci_hub.pdf'
+file_link=df_links['link'][df_links['pmid']== pmid].values[0]
+file_link=file_link.replace('view?usp=drivesdk','preview')
+
 
 st.markdown("""---""")    
 try:
-    link1= """<!--Get the samples from https://www.adobe.com/go/pdfembedapi_samples-->
-<!DOCTYPE html>
-<html>
-<head>
- <title>Adobe Document Services PDF Embed API Sample</title>
- <meta charset="utf-8"/>
- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
- <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1"/>
-</head>
-<body style="margin: 0px">
- <div id="adobe-dc-view"></div>
- <script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
- <script type="text/javascript">
-    document.addEventListener("adobe_dc_view_sdk.ready", function()
-    {
-        var adobeDCView = new AdobeDC.View({clientId: "2e5404e66e0c49e5bd388e52df9bb3a2", divId: "adobe-dc-view"});
-        adobeDCView.previewFile(
-       {
-          content:   {location: {url:'"""+pdf_link+ """'
-          
-          }},
-          metaData: {fileName:'""" + pdf_link_name +"""'
-          
-          }
-       });
-    });
- </script>
-</body>
-</html>
-    """
-    
-    
-    components.html(link1,width=900, height=1000)  # width=900, height=1000, frameborder=0, style="border:0;")
-    # components.iframe(link1,width=900, height=1000, frameborder=0, style="border:0;")
+    components.iframe(file_link,  height=1000)
 except:
     st.markdown("# The full text is not available in the folder")
-        
+
+# link1       
 st.write(pd.DataFrame(get_data()))
 
 # ---- HIDE STREAMLIT STYLE ----
