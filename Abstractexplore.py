@@ -5,25 +5,7 @@ from annotated_text import annotated_text
 import streamlit.components.v1 as components
 import firebase_admin
 from firebase_admin import credentials,storage
-if not firebase_admin._apps:
-    cred = credentials.Certificate("key.json")
-    app = firebase_admin.initialize_app(cred,{'storageBucket': 'facial-reanimation.appspot.com'})
-else:
-    app = firebase_admin.get_app()
 
-# if 'app' not in st.session_state:
-#     st.session_state['app'] = default_app
-
-bucket= storage.bucket(app=app)
-files = bucket.list_blobs() # fetch all the files in the bucket
-my_lit={}
-for i in files: 
-    # print('The public url is ', i.public_url)
-    file_name=i.public_url.split('/')[-1]
-    file_pmid=file_name.split('_')[0]
-    # print(f'{file_pmid}: {i.public_url}')
-    my_lit[file_pmid]=i.public_url
-    # print(f'{file_pmid}: {i.public_url}')
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Facial Reanimation Article Explorer",
                    page_icon="📑", layout="wide")
@@ -108,17 +90,19 @@ def map_entities(doc):
 pmids=df['pmid'].to_list()
 my_list = pmids
 # sidebar = st.sidebar
-left_col,mid_col,next_col = st.columns([1, 1,1])
+left_col,mid_col,next_col = st.columns([2, 1,2])
 def pmid_to_index():
     st.session_state.indx = pmids.index(st.session_state.pmid_select)
-def index_to_pmid():
-    st.session_state.pmid_select =my_list[st.session_state.indx]
+
     
 with mid_col:
-    pmid_selector = st.selectbox("Select a PMID", pmids,key='pmid_select',on_change =  pmid_to_index)
+    pmid_select = st.selectbox("Select a PMID", pmids,key='pmid_select',on_change =  pmid_to_index)
+    pmid_index=pmids.index(st.session_state.pmid_select)
+    if 'indx' not in st.session_state:
+        st.session_state['indx'] = pmid_index
 
     # st.session_state['article_index'] = 
-    show_next =st.number_input('PMID Index',  key= "indx", on_change =  index_to_pmid,value=pmids.index(st.session_state.pmid_select))
+    show_next =pmid_index #st.number_input('PMID Index',  key= "indx", on_change =  index_to_pmid,value=pmid_index)
     selected=(my_list[show_next])
     abs_num=df[df['pmid'] == selected].index[0]
     patients = df['patients'].loc[abs_num]
@@ -147,8 +131,21 @@ st.session_state.abs_num=abs_num
 @st.cache(allow_output_mutation=True)
 def get_data():
     return []
-
-
+def update_data(patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in):
+    get_data().append(
+            {"PMID": pmid, "Patients": patients, "Age": age_in, "Min Age": min_age_in, "Max Age": max_age_in, "Min Time to Reinnervation": min_time_to_reinnervation_in, "Max Time to Reinnervation": max_time_to_reinnervation_in, "Min Follow up": min_follow_up_in, "Max Follow up": max_follow_up_in})
+    df['patients'].loc[abs_num]=patients
+    df['time_to_reinnervation_(min)'].loc[abs_num]=min_time_to_reinnervation_in
+    df['time_to_reinnervation_(max)'].loc[abs_num]= max_time_to_reinnervation_in
+    df['Age'].loc[abs_num]= age_in
+    df['min age'].loc[abs_num]= min_age_in
+    df['max age'].loc[abs_num]= max_age_in
+    df['follow up min'].loc[abs_num]= min_follow_up_in
+    df['follow up max'].loc[abs_num]= max_follow_up_in
+    df.to_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
+def index_to_pmid():
+    st.session_state.pmid_select =my_list[st.session_state.indx]
+    update_data(patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in)
 pmid = df['pmid'].loc[abs_num]
 min_time_to_reinnervation = df['time_to_reinnervation_(min)'].loc[abs_num]
 max_time_to_reinnervation = df['time_to_reinnervation_(max)'].loc[abs_num]
@@ -179,31 +176,20 @@ with inp8:
 
 with inp9:
     st.write("Save Inputs")
-    if st.button("Save All", key="add",on_click=pmid_to_index):
-        get_data().append(
-            {"PMID": pmid, "Patients": patients, "Age": age_in, "Min Age": min_age_in, "Max Age": max_age_in, "Min Time to Reinnervation": min_time_to_reinnervation_in, "Max Time to Reinnervation": max_time_to_reinnervation_in, "Min Follow up": min_follow_up_in, "Max Follow up": max_follow_up_in})
-        # st.session_state.abs_num += 1
-        df['patients'].loc[abs_num]=patients
-        df['time_to_reinnervation_(min)'].loc[abs_num]=min_time_to_reinnervation_in
-        df['time_to_reinnervation_(max)'].loc[abs_num]= max_time_to_reinnervation_in
-        df['Age'].loc[abs_num]= age_in
-        df['min age'].loc[abs_num]= min_age_in
-        df['max age'].loc[abs_num]= max_age_in
-        df['follow up min'].loc[abs_num]= min_follow_up_in
-        df['follow up max'].loc[abs_num]= max_follow_up_in
-        df.to_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
-        show_next+=1  
+    if st.button("Save All", key="add",on_click=index_to_pmid):
+        st.session_state.indx +=1  
     
-    
-# https://www.dropbox.com/s/e8uiv50xllts62t/1908974_sci_hub.pdf?dl=0
-# https://www.dropbox.com/s/k5yrxn4ny86x131/1944838_sci_hub.pdf?dl=0
+
+       
+
 df_links = pd.read_csv('pdf_file_links_2.csv')
-file_link=df_links['link'][df_links['pmid']== pmid].values[0]
-file_link=file_link.replace('view?usp=drivesdk','preview')
+
 
 
 st.markdown("""---""")    
 try:
+    file_link=df_links['link'][df_links['pmid']== pmid].values[0]
+    file_link=file_link.replace('view?usp=drivesdk','preview')
     components.iframe(file_link,  height=1000)
 except:
     st.markdown("# The full text is not available in the folder")
