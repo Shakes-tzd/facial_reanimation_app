@@ -59,10 +59,12 @@ df = get_data_from_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnerv
 pmids=df['pmid'].to_list()
 my_list = pmids
 # sidebar = st.sidebar
-left_col,right_col = st.columns([1,5])
+left_col,right_col = st.columns([5,1])
 
-with left_col:
-    pmid_select = st.selectbox('' ,pmids,key='pmid_select',on_change =  pmid_to_index)
+with right_col:
+   
+    st.markdown(" ")
+    pmid_select = st.selectbox('PMID' ,pmids,key='pmid_select',on_change =  pmid_to_index)
     pmid_index=pmids.index(st.session_state.pmid_select)
     if 'indx' not in st.session_state:
         st.session_state['indx'] = pmid_index
@@ -86,9 +88,9 @@ selected_model = models["en"]
 doc = selected_model(text_input)
 anonymized_tokens = process_text(doc)
 height = int(len(text_input) * 0.5) + 10
-with right_col:
+with left_col:
     # st.write('Expand to read the abstract')
-    st.write('##',doc_title)
+    st.write("###",doc_title)
     with st.expander("Abstract"):
         st.markdown(f"**{doc_title}**")
         annotated_text(*anonymized_tokens)
