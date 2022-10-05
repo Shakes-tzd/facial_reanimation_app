@@ -114,7 +114,7 @@ with back_button:
 with next_button:
     st.button("      Next       ", key="next",on_click=next_index_to_pmid)
         
-with st.form(key='Paper Details'):
+with st.form(key='Paper Details', clear_on_submit=False):
     inp1, inp2, inp3, inp4 = st.columns(4)
     with inp1:
         patients_in = st.text_input('Patients', value=str(patients))
