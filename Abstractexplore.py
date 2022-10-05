@@ -112,10 +112,14 @@ with inp3:
 with inp4:
     max_age_in = st.number_input('Max Age', value=float(max_age), min_value=0.0, max_value=1000.0)
 with nav:
-    if st.button("Next", key="next",on_click=next_index_to_pmid):
+    if st.button("      Next       ", key="next",on_click=next_index_to_pmid):
         st.session_state.indx +=1 
-    if st.button("Back", key="back",on_click=next_index_to_pmid):
+        percent_complete=st.session_state.indx
+        my_bar.progress(percent_complete + 1)
+    if st.button("      Back       ", key="back",on_click=next_index_to_pmid):
         st.session_state.indx -=1 
+        percent_complete=st.session_state.indx
+        my_bar.progress(percent_complete - 1)
     
 inp5, inp6, inp7, inp8,inp9 = st.columns(5)
 with inp5:
@@ -130,7 +134,7 @@ with inp8:
 with inp9:
     
     st.write("Save Inputs")
-    if st.button("Save All", key="add",on_click=index_to_pmid):
+    if st.button("      Save       ", key="add",on_click=index_to_pmid):
         percent_complete=st.session_state.indx
         my_bar.progress(percent_complete + 1)
         
