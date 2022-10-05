@@ -1,23 +1,14 @@
 import pandas as pd  # pip install pandas openpyxl
 import streamlit as st  # pip install streamlit
-import spacy
 from annotated_text import annotated_text
 import streamlit.components.v1 as components
+from fr_modules.fr_text_analysis import load_models, process_text, resamble, map_entities
+from fr_modules.html_gen import gen_html
+import time
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Facial Reanimation Article Explorer",
                    page_icon="📑", layout="wide")
-
-# ---- READ EXCEL ----
-
-# my_lit
-@st.cache(show_spinner=False, allow_output_mutation=True, suppress_st_warning=True)
-def load_models():
-    # french_model = spacy.load("models/fr/")
-    english_model = spacy.load("models/en")
-    models = {"en": english_model}  # , "fr": french_model}
-    return models
-
 
 @st.cache(show_spinner=False, allow_output_mutation=True, suppress_st_warning=True)
 def get_data_from_csv(source_file):
@@ -29,90 +20,31 @@ def get_data_from_csv(source_file):
 df = get_data_from_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv')
 
 
-def process_text(doc):
-    tokens = []
-    for token in doc:
-
-        if (token.ent_type_ == "CARDINAL") or token.like_num:
-            tokens.append((token.text, "", "#faa"))
-        # else:
-        #     if (token.text == "patients") or (token.text == "patient") or (token.text == "case") or (token.text == "cases"):
-        #         tokens.append((token.text, "", "#00968C"))
-        #     else:
-        #         if (token.text == "double") or (token.text == "dual"):
-        #             tokens.append((token.text, "", "#8ef"))
-        else:
-            tokens.append(" " + token.text + " ")
-    return tokens
-
-
-ent_color_mapping = {
-    "ORG": "#faa",
-    "CARDINAL": "#00968C"}
-
-
-def resamble(plain_text, entities):
-    ll = []
-    entities_copy = entities.copy()
-    prev_ent_idx = 0
-    current_ent_idx = 0
-    while len(entities) > 0:
-        if len(ll) == 0:
-            ll.append(plain_text[:entities[current_ent_idx]["start"]])
-            ll.append((plain_text[entities[0]["start"]:entities[0]["end"]],
-                      entities[0]["label"], ent_color_mapping[entities[0]["label"]]))
-        else:
-            ll.append(
-                plain_text[entities_copy[prev_ent_idx-1]["end"]:entities[0]["start"]])
-            ll.append((plain_text[entities[0]["start"]:entities[0]["end"]],
-                      entities[0]["label"], ent_color_mapping[entities[0]["label"]]))
-        if len(entities) > 1:
-            del entities[0]
-            prev_ent_idx += 1
-            continue
-        else:
-            ll.append(plain_text[entities[0]["end"]:])
-            del entities[0]
-    return ll
-
-
-def map_entities(doc):
-    plain_text = doc.text
-    entities = text.entities
-    return resamble(plain_text, entities)
-
-
-# st.markdown("**Abstracts**")
-# st.markdown("---")
-# df
 pmids=df['pmid'].to_list()
 my_list = pmids
 # sidebar = st.sidebar
-left_col,mid_col,next_col = st.columns([2, 1,2])
+left_col,right_col = st.columns([1,5])
 def pmid_to_index():
     st.session_state.indx = pmids.index(st.session_state.pmid_select)
 
     
-with mid_col:
-    pmid_select = st.selectbox("Select a PMID", pmids,key='pmid_select',on_change =  pmid_to_index)
+with left_col:
+    pmid_select = st.selectbox('' ,pmids,key='pmid_select',on_change =  pmid_to_index)
     pmid_index=pmids.index(st.session_state.pmid_select)
     if 'indx' not in st.session_state:
         st.session_state['indx'] = pmid_index
-
     # st.session_state['article_index'] = 
-    show_next =pmid_index #st.number_input('PMID Index',  key= "indx", on_change =  index_to_pmid,value=pmid_index)
-    selected=(my_list[show_next])
+    # show_next =pmid_index #st.number_input('PMID Index',  key= "indx", on_change =  index_to_pmid,value=pmid_index)
+    selected=(my_list[st.session_state.indx])
     abs_num=df[df['pmid'] == selected].index[0]
+    
     patients = df['patients'].loc[abs_num]
+    my_bar = st.progress(0)
     
 
 
 
 models = load_models()
-
-# abs_num = st.number_input("Choose Abstract to Show",value=0, min_value=0, max_value=max(df['pmid'])-1)
-
-    
 
 
 doc_title = df['title'].loc[abs_num]
@@ -121,15 +53,19 @@ text_input = df['abstract'].loc[abs_num]
 selected_model = models["en"]
 doc = selected_model(text_input)
 anonymized_tokens = process_text(doc)
-st.markdown(f"**{doc_title}**")
 height = int(len(text_input) * 0.5) + 10
-annotated_text(*anonymized_tokens)
-st.session_state.abs_num=abs_num
+with right_col:
+    # st.write('Expand to read the abstract')
+    st.write('##',doc_title)
+    with st.expander("Abstract"):
+        st.markdown(f"**{doc_title}**")
+        annotated_text(*anonymized_tokens)
+# st.session_state.abs_num=abs_num
 
 @st.cache(allow_output_mutation=True)
 def get_data():
     return []
-def update_data(patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in):
+def update_data(df,patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in):
     get_data().append(
             {"PMID": pmid, "Patients": patients, 
              "Age": age_in, 
@@ -150,10 +86,13 @@ def update_data(patients, age_in, min_age_in, max_age_in, min_time_to_reinnervat
     df.loc[abs_num,'follow up max']= max_follow_up_in
     df.to_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
 def index_to_pmid():
+    # 
+    update_data(df,patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in)
+    st.session_state.indx +=1 
     st.session_state.pmid_select =my_list[st.session_state.indx]
-    update_data(patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in)
 def next_index_to_pmid():
     st.session_state.pmid_select =my_list[st.session_state.indx]
+
 pmid = df['pmid'].loc[abs_num]
 min_time_to_reinnervation = df['time_to_reinnervation_(min)'].loc[abs_num]
 max_time_to_reinnervation = df['time_to_reinnervation_(max)'].loc[abs_num]
@@ -162,7 +101,7 @@ min_age= df['min age'].loc[abs_num]
 max_age= df['max age'].loc[abs_num]
 min_follow_up= df['follow up min'].loc[abs_num]
 max_follow_up= df['follow up max'].loc[abs_num]
-st.markdown("""---""")
+
 inp1, inp2, inp3, inp4,nav = st.columns(5)
 with inp1:
     patients = st.number_input('Patients', value=float(patients), min_value=0.0, max_value=1000.0)
@@ -189,50 +128,31 @@ with inp8:
     max_follow_up_in = st.number_input('Max Follow up', value=float(max_follow_up), min_value=0.0, max_value=1000.0)
 
 with inp9:
+    
     st.write("Save Inputs")
     if st.button("Save All", key="add",on_click=index_to_pmid):
-        st.session_state.indx +=1  
+        percent_complete=st.session_state.indx
+        my_bar.progress(percent_complete + 1)
+        
+
+        # for percent_complete in range(100):
+        #     time.sleep(0.1)
+            
+        # st.session_state.indx +=1  
+        # st.session_state.pmid_select =my_list[st.session_state.indx]
+        
 
 my_lit=pd.read_csv('my_lit.csv')
 
 filename=f"{pmid}_sci_hub.pdf" #'10474465_sci_hub.pdf'#
 # import filename
 filelink='https://storage.googleapis.com/facial-reanimation.appspot.com/downloaded_articles/'+filename
-filelink
-filename
+
 df_links = pd.read_csv('pdf_file_links_2.csv')
-index = open("pdf_render.html").read() #.format(url=filelink, location=filename)
+# index = open("pdf_render.html").read() #.format(url=filelink, location=filename)
 # index
 
-link1="""
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Adobe Document Services PDF Embed API Sample</title>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1"/>
-    <script type="text/javascript" src="index.js"></script>
-</head>
-<!-- Customize page layout style according to your need and PDF file for best viewing experience -->
-<body style="margin: 0px 0 0 0px;">
-    <div id="adobe-dc-view" style="height: 1000px; ;"></div>
-<script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
-<script type="text/javascript">
-	document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
-		var adobeDCView = new AdobeDC.View({clientId: "ec53503d261f40cbb2f99bfd276b21d2", divId: "adobe-dc-view"});
-		adobeDCView.previewFile({
-			content:{location: {url: '""" +str(filelink)+ """'}},
-			metaData:{fileName: '"""+str(filename)+"""'}
-		}, );
-	});
-</script>
-
-
-</body>
-</html>
-
-"""
+link1=gen_html(filelink,filename)
 # Func = open("link1.html","w")
 # Func.write(link1)
 # Func.close()
@@ -243,14 +163,14 @@ link1="""
 # print(source_code)
 # components.html(source_code)
 try:
-    file_link=df_links['link'][df_links['pmid']== pmid].values[0]
-    file_link=file_link.replace('view?usp=drivesdk','preview')
+    # file_link=df_links['link'][df_links['pmid']== pmid].values[0]
+    # file_link=file_link.replace('view?usp=drivesdk','preview')
     # components.iframe(file_link,  height=1000)
     components.html(link1, height=1000)
 except:
     st.markdown("# The full text is not available in the folder")
 
-link1       
+   
 st.write(pd.DataFrame(get_data()))
 
 # ---- HIDE STREAMLIT STYLE ----
