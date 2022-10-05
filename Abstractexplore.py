@@ -117,17 +117,17 @@ with next_button:
 with st.form(key='Paper Details', clear_on_submit=False):
     inp1, inp2, inp3, inp4 = st.columns(4)
     with inp1:
-        patients_in = st.text_input('Patients', value=str(patients))
-        age_in = st.text_input('Age', value=str(age))
+        patients_in = st.text_input('Patients', value=str(df['patients'].loc[article_index]))
+        age_in = st.text_input('Age', value=str(df['Age'].loc[article_index]))
     with inp2:
-        min_age_in = st.text_input('Min Age', value=str(min_age))
-        max_age_in = st.text_input('Max Age', value=str(max_age))
+        min_age_in = st.text_input('Min Age', value=str(df['min age'].loc[article_index]))
+        max_age_in = st.text_input('Max Age', value=str(df['max age'].loc[article_index]))
     with inp3:
-        min_time_to_reinnervation_in = st.text_input('Min Time to Reinnervation', value=str(min_time_to_reinnervation))
-        max_time_to_reinnervation_in = st.text_input('Max Time to Reinnervation', value=str(max_time_to_reinnervation))
+        min_time_to_reinnervation_in = st.text_input('Min Time to Reinnervation', value=str(df['time_to_reinnervation_(min)'].loc[article_index]))
+        max_time_to_reinnervation_in = st.text_input('Max Time to Reinnervation', value=str(df['time_to_reinnervation_(max)'].loc[article_index]))
     with inp4:
-         min_follow_up_in = st.text_input('Min Follow up', value=str(min_follow_up))
-         max_follow_up_in = st.text_input('Max Follow up', value=str(max_follow_up))
+         min_follow_up_in = st.text_input('Min Follow up', value=str(df['follow up min'].loc[article_index]))
+         max_follow_up_in = st.text_input('Max Follow up', value=str(df['follow up max'].loc[article_index]))
     
     submitted=st.form_submit_button("Save",on_click=index_to_pmid)
     
