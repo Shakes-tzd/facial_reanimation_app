@@ -66,9 +66,10 @@ with right_col:
 @st.cache(allow_output_mutation=True)
 def get_data():
     return []
-def update_data(df,patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in):
+def update_data(df,pmid,patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in):
     get_data().append(
-            {"PMID": pmid, "Patients": patients, 
+            {"PMID": pmid, 
+             "Patients": patients, 
              "Age": age_in, 
              "Min Age": min_age_in, 
              "Max Age": max_age_in, 
@@ -87,8 +88,7 @@ def update_data(df,patients, age_in, min_age_in, max_age_in, min_time_to_reinner
     df.loc[abs_num,'follow up max']= max_follow_up_in
     df.to_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
 def index_to_pmid():
-    # 
-    update_data(df,patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in)
+    update_data(df,pmid,patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in)
     st.session_state.indx +=1 
     st.session_state.pmid_select =my_list[st.session_state.indx]
 def next_index_to_pmid():
@@ -142,7 +142,7 @@ with inp8:
 with inp9:
     
     st.write("Save Inputs")
-    if st.button("      Save       ", key="add",on_click=index_to_pmid):
+    if st.button("Save", key="add",on_click=index_to_pmid):
         percent_complete=st.session_state.indx
         st.session_state.my_bar.progress(percent_complete + 1)
         
