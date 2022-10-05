@@ -36,9 +36,10 @@ with left_col:
     # st.session_state['article_index'] = 
     # show_next =pmid_index #st.number_input('PMID Index',  key= "indx", on_change =  index_to_pmid,value=pmid_index)
     selected=(my_list[st.session_state.indx])
-    abs_num=df[df['pmid'] == selected].index[0]
+    article_index=df[df['pmid'] == selected].index[0]
+    # df[df['pmid'] == selected].index[0]
     
-    patients = df['patients'].loc[abs_num]
+    patients = df['patients'].loc[article_index]
     if 'my_bar' not in st.session_state:
         st.session_state['my_bar'] = st.progress(0)
     
@@ -48,9 +49,9 @@ with left_col:
 models = load_models()
 
 
-doc_title = df['title'].loc[abs_num]
+doc_title = df['title'].loc[article_index]
 # width, height = pyautogui.size()
-text_input = df['abstract'].loc[abs_num]
+text_input = df['abstract'].loc[article_index]
 selected_model = models["en"]
 doc = selected_model(text_input)
 anonymized_tokens = process_text(doc)
@@ -61,7 +62,7 @@ with right_col:
     with st.expander("Abstract"):
         st.markdown(f"**{doc_title}**")
         annotated_text(*anonymized_tokens)
-# st.session_state.abs_num=abs_num
+# st.session_state.article_index=article_index
 
 @st.cache(allow_output_mutation=True)
 def get_data():
@@ -78,14 +79,14 @@ def update_data(df,pmid,patients, age_in, min_age_in, max_age_in, min_time_to_re
              "Min Follow up": min_follow_up_in, 
              "Max Follow up": max_follow_up_in})
     
-    df.loc[abs_num,'patients']=patients
-    df.loc[abs_num,'time_to_reinnervation_(min)']=min_time_to_reinnervation_in
-    df.loc[abs_num,'time_to_reinnervation_(max)']= max_time_to_reinnervation_in
-    df.loc[abs_num,'Age']= age_in
-    df.loc[abs_num,'min age']= min_age_in
-    df.loc[abs_num,'max age']= max_age_in
-    df.loc[abs_num,'follow up min']= min_follow_up_in
-    df.loc[abs_num,'follow up max']= max_follow_up_in
+    df.loc[article_index,'patients']=patients
+    df.loc[article_index,'time_to_reinnervation_(min)']=min_time_to_reinnervation_in
+    df.loc[article_index,'time_to_reinnervation_(max)']= max_time_to_reinnervation_in
+    df.loc[article_index,'Age']= age_in
+    df.loc[article_index,'min age']= min_age_in
+    df.loc[article_index,'max age']= max_age_in
+    df.loc[article_index,'follow up min']= min_follow_up_in
+    df.loc[article_index,'follow up max']= max_follow_up_in
     df.to_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
 def index_to_pmid():
     update_data(df,pmid,patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in)
@@ -100,14 +101,14 @@ def back_index_to_pmid():
         st.session_state.pmid_select =my_list[st.session_state.indx]
 
 
-pmid = df['pmid'].loc[abs_num]
-min_time_to_reinnervation = df['time_to_reinnervation_(min)'].loc[abs_num]
-max_time_to_reinnervation = df['time_to_reinnervation_(max)'].loc[abs_num]
-age= df['Age'].loc[abs_num]
-min_age= df['min age'].loc[abs_num]
-max_age= df['max age'].loc[abs_num]
-min_follow_up= df['follow up min'].loc[abs_num]
-max_follow_up= df['follow up max'].loc[abs_num]
+pmid = df['pmid'].loc[article_index]
+min_time_to_reinnervation = df['time_to_reinnervation_(min)'].loc[article_index]
+max_time_to_reinnervation = df['time_to_reinnervation_(max)'].loc[article_index]
+age= df['Age'].loc[article_index]
+min_age= df['min age'].loc[article_index]
+max_age= df['max age'].loc[article_index]
+min_follow_up= df['follow up min'].loc[article_index]
+max_follow_up= df['follow up max'].loc[article_index]
 
 inp1, inp2, inp3, inp4,nav = st.columns(5)
 with inp1:
