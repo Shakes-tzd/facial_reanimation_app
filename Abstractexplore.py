@@ -5,6 +5,7 @@ from annotated_text import annotated_text
 import streamlit.components.v1 as components
 import firebase_admin
 from firebase_admin import credentials,storage
+import os
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Facial Reanimation Article Explorer",
@@ -133,19 +134,29 @@ def get_data():
     return []
 def update_data(patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in):
     get_data().append(
-            {"PMID": pmid, "Patients": patients, "Age": age_in, "Min Age": min_age_in, "Max Age": max_age_in, "Min Time to Reinnervation": min_time_to_reinnervation_in, "Max Time to Reinnervation": max_time_to_reinnervation_in, "Min Follow up": min_follow_up_in, "Max Follow up": max_follow_up_in})
-    df['patients'].loc[abs_num]=patients
-    df['time_to_reinnervation_(min)'].loc[abs_num]=min_time_to_reinnervation_in
-    df['time_to_reinnervation_(max)'].loc[abs_num]= max_time_to_reinnervation_in
-    df['Age'].loc[abs_num]= age_in
-    df['min age'].loc[abs_num]= min_age_in
-    df['max age'].loc[abs_num]= max_age_in
-    df['follow up min'].loc[abs_num]= min_follow_up_in
-    df['follow up max'].loc[abs_num]= max_follow_up_in
+            {"PMID": pmid, "Patients": patients, 
+             "Age": age_in, 
+             "Min Age": min_age_in, 
+             "Max Age": max_age_in, 
+             "Min Time to Reinnervation": min_time_to_reinnervation_in, 
+             "Max Time to Reinnervation": max_time_to_reinnervation_in, 
+             "Min Follow up": min_follow_up_in, 
+             "Max Follow up": max_follow_up_in})
+    
+    df.loc[abs_num,'patients']=patients
+    df.loc[abs_num,'time_to_reinnervation_(min)']=min_time_to_reinnervation_in
+    df.loc[abs_num,'time_to_reinnervation_(max)']= max_time_to_reinnervation_in
+    df.loc[abs_num,'Age']= age_in
+    df.loc[abs_num,'min age']= min_age_in
+    df.loc[abs_num,'max age']= max_age_in
+    df.loc[abs_num,'follow up min']= min_follow_up_in
+    df.loc[abs_num,'follow up max']= max_follow_up_in
     df.to_csv('30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
 def index_to_pmid():
     st.session_state.pmid_select =my_list[st.session_state.indx]
     update_data(patients, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in)
+def next_index_to_pmid():
+    st.session_state.pmid_select =my_list[st.session_state.indx]
 pmid = df['pmid'].loc[abs_num]
 min_time_to_reinnervation = df['time_to_reinnervation_(min)'].loc[abs_num]
 max_time_to_reinnervation = df['time_to_reinnervation_(max)'].loc[abs_num]
@@ -155,7 +166,7 @@ max_age= df['max age'].loc[abs_num]
 min_follow_up= df['follow up min'].loc[abs_num]
 max_follow_up= df['follow up max'].loc[abs_num]
 st.markdown("""---""")
-inp1, inp2, inp3, inp4, = st.columns(4)
+inp1, inp2, inp3, inp4,nav = st.columns(5)
 with inp1:
     patients = st.number_input('Patients', value=float(patients), min_value=0.0, max_value=1000.0)
 with inp2:
@@ -164,6 +175,12 @@ with inp3:
     min_age_in = st.number_input('Min Age', value=float(min_age), min_value=0.0, max_value=1000.0)
 with inp4:
     max_age_in = st.number_input('Max Age', value=float(max_age), min_value=0.0, max_value=1000.0)
+with nav:
+    if st.button("Next", key="next",on_click=next_index_to_pmid):
+        st.session_state.indx +=1 
+    if st.button("Back", key="back",on_click=next_index_to_pmid):
+        st.session_state.indx -=1 
+    
 inp5, inp6, inp7, inp8,inp9 = st.columns(5)
 with inp5:
     min_time_to_reinnervation_in = st.number_input('Min Time to Reinnervation', value=float(min_time_to_reinnervation), min_value=0.0, max_value=1000.0)
@@ -178,23 +195,65 @@ with inp9:
     st.write("Save Inputs")
     if st.button("Save All", key="add",on_click=index_to_pmid):
         st.session_state.indx +=1  
-    
 
-       
+my_lit=pd.read_csv('my_lit.csv')
 
+filename=f"{pmid}_sci_hub.pdf" #'10474465_sci_hub.pdf'#
+# import filename
+filelink='https://storage.googleapis.com/facial-reanimation.appspot.com/downloaded_articles/'+filename
+filelink
+filename
 df_links = pd.read_csv('pdf_file_links_2.csv')
+index = open("pdf_render.html").read() #.format(url=filelink, location=filename)
+index
+
+link1="""
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adobe Document Services PDF Embed API Sample</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1"/>
+    <script type="text/javascript" src="index.js"></script>
+</head>
+<!-- Customize page layout style according to your need and PDF file for best viewing experience -->
+<body style="margin: 0px 0 0 0px;">
+    <div id="adobe-dc-view" style="height: 1000px; ;"></div>
+<script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
+<script type="text/javascript">
+	document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
+		var adobeDCView = new AdobeDC.View({clientId: "ec53503d261f40cbb2f99bfd276b21d2", divId: "adobe-dc-view"});
+		adobeDCView.previewFile({
+			content:{location: {url: '""" +str(filelink)+ """'}},
+			metaData:{fileName: '"""+str(filename)+"""'}
+		}, );
+	});
+</script>
 
 
+</body>
+</html>
 
-st.markdown("""---""")    
+"""
+# Func = open("link1.html","w")
+# Func.write(link1)
+# Func.close()
+
+# st.markdown("""---""")    
+# HtmlFile = open("link1.html", 'r', encoding='utf-8')
+# source_code = HtmlFile.read() 
+# print(source_code)
+# components.html(source_code)
 try:
     file_link=df_links['link'][df_links['pmid']== pmid].values[0]
     file_link=file_link.replace('view?usp=drivesdk','preview')
-    components.iframe(file_link,  height=1000)
+    # components.iframe(file_link,  height=1000)
+    components.html(link1, height=1000)
 except:
     st.markdown("# The full text is not available in the folder")
 
-# link1       
+link1       
 st.write(pd.DataFrame(get_data()))
 
 # ---- HIDE STREAMLIT STYLE ----
