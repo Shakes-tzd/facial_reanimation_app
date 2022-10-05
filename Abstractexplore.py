@@ -99,14 +99,14 @@ with left_col:
 
 
 
-pmid = df['pmid'].loc[article_index]
-min_time_to_reinnervation = df['time_to_reinnervation_(min)'].loc[article_index]
-max_time_to_reinnervation = df['time_to_reinnervation_(max)'].loc[article_index]
-age= df['Age'].loc[article_index]
-min_age= df['min age'].loc[article_index]
-max_age= df['max age'].loc[article_index]
-min_follow_up= df['follow up min'].loc[article_index]
-max_follow_up= df['follow up max'].loc[article_index]
+pmid = df['pmid'][df['pmid']== pmid_select].values[0]
+min_time_to_reinnervation = df['time_to_reinnervation_(min)'][df['pmid']== pmid_select].values[0]
+max_time_to_reinnervation = df['time_to_reinnervation_(max)'][df['pmid']== pmid_select].values[0]
+age= df['Age'][df['pmid']== pmid_select].values[0]
+min_age= df['min age'][df['pmid']== pmid_select].values[0]
+max_age= df['max age'][df['pmid']== pmid_select].values[0]
+min_follow_up= df['follow up min'][df['pmid']== pmid_select].values[0]
+max_follow_up= df['follow up max'][df['pmid']== pmid_select].values[0]
 back_button, next_button,space = st.columns([1,1,10])
 with back_button:
     st.button("      Back       ", key="back",on_click=back_index_to_pmid)
@@ -118,20 +118,20 @@ with st.form(key='Paper Details', clear_on_submit=False):
     inp1, inp2, inp3, inp4 = st.columns(4)
     with inp1:
         patients_in = st.text_input('Patients', value=str(df['patients'].loc[article_index]))
-        age_in = st.text_input('Age', value=str(df['Age'].loc[article_index]))
+        age_in = st.text_input('Age', value=str(age))
     with inp2:
-        min_age_in = st.text_input('Min Age', value=str(df['min age'].loc[article_index]))
-        max_age_in = st.text_input('Max Age', value=str(df['max age'].loc[article_index]))
+        min_age_in = st.text_input('Min Age', value=str(min_age))
+        max_age_in = st.text_input('Max Age', value=str(max_age))
     with inp3:
-        min_time_to_reinnervation_in = st.text_input('Min Time to Reinnervation', value=str(df['time_to_reinnervation_(min)'].loc[article_index]))
-        max_time_to_reinnervation_in = st.text_input('Max Time to Reinnervation', value=str(df['time_to_reinnervation_(max)'].loc[article_index]))
+        min_time_to_reinnervation_in = st.text_input('Min Time to Reinnervation', value=str(min_time_to_reinnervation))
+        max_time_to_reinnervation_in = st.text_input('Max Time to Reinnervation', value=str(max_time_to_reinnervation))
     with inp4:
-         min_follow_up_in = st.text_input('Min Follow up', value=str(df['follow up min'].loc[article_index]))
-         max_follow_up_in = st.text_input('Max Follow up', value=str(df['follow up max'].loc[article_index]))
+         min_follow_up_in = st.text_input('Min Follow up', value=str(min_follow_up))
+         max_follow_up_in = st.text_input('Max Follow up', value=str(max_follow_up))
     
     submitted=st.form_submit_button("Save",on_click=index_to_pmid)
     
-        
+# df['link']         
 my_bar = st.progress(0)
 percent_complete=((st.session_state.indx)/len(pmids))
 my_bar.progress(percent_complete)
@@ -163,7 +163,7 @@ try:
 except:
     st.markdown("# The full text is not available in the folder")
 
-   
+
 st.write(pd.DataFrame(get_data()))
 
 # ---- HIDE STREAMLIT STYLE ----
