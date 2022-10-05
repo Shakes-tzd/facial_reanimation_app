@@ -3,9 +3,6 @@ import streamlit as st  # pip install streamlit
 import spacy
 from annotated_text import annotated_text
 import streamlit.components.v1 as components
-import firebase_admin
-from firebase_admin import credentials,storage
-import os
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Facial Reanimation Article Explorer",
@@ -205,7 +202,7 @@ filelink
 filename
 df_links = pd.read_csv('pdf_file_links_2.csv')
 index = open("pdf_render.html").read() #.format(url=filelink, location=filename)
-index
+# index
 
 link1="""
 <!DOCTYPE html>
