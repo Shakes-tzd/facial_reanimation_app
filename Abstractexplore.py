@@ -39,7 +39,8 @@ with left_col:
     abs_num=df[df['pmid'] == selected].index[0]
     
     patients = df['patients'].loc[abs_num]
-    my_bar = st.progress(0)
+    if 'my_bar' not in st.session_state:
+        st.session_state['my_bar'] = st.progress(0)
     
 
 
@@ -94,8 +95,10 @@ def next_index_to_pmid():
     st.session_state.indx +=1 
     st.session_state.pmid_select =my_list[st.session_state.indx]
 def back_index_to_pmid():
-    st.session_state.indx -=1 
-    st.session_state.pmid_select =my_list[st.session_state.indx]
+    if st.session_state.indx > 0:
+        st.session_state.indx -=1 
+        st.session_state.pmid_select =my_list[st.session_state.indx]
+
 
 pmid = df['pmid'].loc[abs_num]
 min_time_to_reinnervation = df['time_to_reinnervation_(min)'].loc[abs_num]
@@ -117,12 +120,14 @@ with inp4:
     max_age_in = st.number_input('Max Age', value=float(max_age), min_value=0.0, max_value=1000.0)
 with nav:
     if st.button("      Next       ", key="next",on_click=next_index_to_pmid):
-        
         percent_complete=st.session_state.indx
-        my_bar.progress(percent_complete + 1)
+        st.session_state.my_bar.progress(percent_complete + 1)
     if st.button("      Back       ", key="back",on_click=back_index_to_pmid):
-        percent_complete=st.session_state.indx
-        my_bar.progress(percent_complete - 1)
+        if st.session_state.indx > 0:
+            percent_complete=st.session_state.indx
+            st.session_state.my_bar.progress(percent_complete - 1)
+        # percent_complete=st.session_state.indx
+        # st.session_state.my_bar.progress(percent_complete - 1)
     
 inp5, inp6, inp7, inp8,inp9 = st.columns(5)
 with inp5:
@@ -139,7 +144,7 @@ with inp9:
     st.write("Save Inputs")
     if st.button("      Save       ", key="add",on_click=index_to_pmid):
         percent_complete=st.session_state.indx
-        my_bar.progress(percent_complete + 1)
+        st.session_state.my_bar.progress(percent_complete + 1)
         
 
         # for percent_complete in range(100):
