@@ -165,7 +165,29 @@ except:
 
 
 st.write(pd.DataFrame(get_data()))
+file_to_download=pd.DataFrame(get_data())
+@st.cache
+def convert_df(df):
+   return df.to_csv().encode('utf-8')
 
+
+csv = convert_df(df)
+input_csv = convert_df(file_to_download)
+
+st.download_button(
+   "Download Main Dataframe as CSV",
+   csv,
+   "file.csv",
+   "text/csv",
+   key='download-csv'
+)
+st.download_button(
+   "Download input df  as CSV",
+   input_csv ,
+   "file.csv",
+   "text/csv",
+   key='download-input_csv'
+)
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
             <style>
