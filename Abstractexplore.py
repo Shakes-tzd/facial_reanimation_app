@@ -13,7 +13,8 @@ st.set_page_config(page_title="Facial Reanimation Article Explorer",
 def get_data_from_csv(source_file):
     df = pd.read_csv(source_file)
     return df
-
+# def update_submit():
+#         st.session_state.submitted = True
 def pmid_to_index():
     st.session_state.indx = pmids.index(st.session_state.pmid_selection)
 @st.cache(allow_output_mutation=True)
@@ -21,25 +22,25 @@ def get_data():
     return []
 def update_data(): #df,pmid_in,patients_in, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in
     get_data().append(
-                {"PMID": float(pmid_in), 
-                "Patients": float(patients_in), 
-                "Age": float(age_in), 
-                "Min Age": float(min_age_in), 
-                "Max Age": float(max_age_in), 
-                "Min Time to Reinnervation": float(min_time_to_reinnervation_in), 
-                "Max Time to Reinnervation": float(max_time_to_reinnervation_in), 
-                "Min Follow up": float(min_follow_up_in), 
-                "Max Follow up": float(max_follow_up_in)})  
-    file_to_download=pd.DataFrame(get_data())
-    df.loc[article_index,'patients']=float(patients_in)
-    df.loc[article_index,'time_to_reinnervation_(min)']=float(min_time_to_reinnervation_in)
-    df.loc[article_index,'time_to_reinnervation_(max)']= float(max_time_to_reinnervation_in)
-    df.loc[article_index,'Age']= float(age_in)
-    df.loc[article_index,'min age']= float(min_age_in)
-    df.loc[article_index,'max age']= float(max_age_in)
-    df.loc[article_index,'follow up min']= float(min_follow_up_in)
-    df.loc[article_index,'follow up max']= float(max_follow_up_in)
-    df.to_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
+                {"PMID": float(pmid), 
+                "Patients": float(patients), 
+                "Age": float(age), 
+                "Min Age": float(min_age), 
+                "Max Age": float(max_age), 
+                "Min Time to Reinnervation": float(min_time_to_reinnervation), 
+                "Max Time to Reinnervation": float(max_time_to_reinnervation), 
+                "Min Follow up": float(min_follow_up), 
+                "Max Follow up": float(max_follow_up)})  
+    # file_to_download=pd.DataFrame(get_data())
+    df.loc[article_index,'patients']=float(patients)
+    df.loc[article_index,'time_to_reinnervation_(min)']=float(min_time_to_reinnervation)
+    df.loc[article_index,'time_to_reinnervation_(max)']= float(max_time_to_reinnervation)
+    df.loc[article_index,'Age']= float(age)
+    df.loc[article_index,'min age']= float(min_age)
+    df.loc[article_index,'max age']= float(max_age)
+    df.loc[article_index,'follow up min']= float(min_follow_up)
+    df.loc[article_index,'follow up max']= float(max_follow_up)
+    return df #,file_to_download #.to_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False)
 
     
     
@@ -107,8 +108,15 @@ with abstr:
     with st.expander(expander_title):
             # st.markdown(f"**{doc_title}**")
             annotated_text(*anonymized_tokens)
-
 pmid =pmid_selection# df['pmid'][df['pmid']== pmid_selection].values[0]
+# if 'submitted' not in st.session_state:
+#     st.session_state['submitted' ]=False
+# if st.session_state.submitted:
+#         df=update_data()
+#         df.to_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False) 
+#         st.session_state['submitted' ]=False  
+
+
 min_time_to_reinnervation = df['time_to_reinnervation_(min)'][df['pmid']== pmid_selection].values[0]
 max_time_to_reinnervation = df['time_to_reinnervation_(max)'][df['pmid']== pmid_selection].values[0]
 age= df['Age'][df['pmid']== pmid_selection].values[0]
@@ -117,32 +125,27 @@ max_age= df['max age'][df['pmid']== pmid_selection].values[0]
 min_follow_up= df['follow up min'][df['pmid']== pmid_selection].values[0]
 max_follow_up= df['follow up max'][df['pmid']== pmid_selection].values[0]
 form_col,article= st.columns([3,10])
-# if 'submitted' not in st.session_state:
-#     st.session_state['submitted' ]=False
-# if st.session_state.submitted:
-#         pmid_in
-#         patients_in
-#         age_in
-#         min_age_in
-#         max_age_in
-#         min_time_to_reinnervation_in
-#         max_time_to_reinnervation_in
-#         min_follow_up_in, max_follow_up_in   
+
 with form_col:
     with st.form(key='Paper_Details', clear_on_submit=True):
-        pmid_in=st.text_input('PMID', pmid)
-        patients_in = st.text_input('Patients', value=patients)
-        age_in = st.text_input('Age', value=age)
-        min_age_in = st.text_input('Min Age', value=min_age)
-        max_age_in = st.text_input('Max Age', value=max_age)
-        min_time_to_reinnervation_in = st.text_input('Min Time to Reinnervation', value=min_time_to_reinnervation)
-        max_time_to_reinnervation_in = st.text_input('Max Time to Reinnervation', value=max_time_to_reinnervation)
-        min_follow_up_in = st.text_input('Min Follow up', value=min_follow_up)
-        max_follow_up_in = st.text_input('Max Follow up', value=max_follow_up)
+        pmid_in= pmid
+        patients = st.text_input('Patients', value=patients)
+        age = st.text_input('Age', value=age)
+        min_age = st.text_input('Min Age', value=min_age)
+        max_age = st.text_input('Max Age', value=max_age)
+        min_time_to_reinnervation = st.text_input('Min Time to Reinnervation', value=min_time_to_reinnervation)
+        max_time_to_reinnervation = st.text_input('Max Time to Reinnervation', value=max_time_to_reinnervation)
+        min_follow_up = st.text_input('Min Follow up', value=min_follow_up)
+        max_follow_up = st.text_input('Max Follow up', value=max_follow_up)
         submitted=st.form_submit_button("Save")
         if submitted:
-            # st.session_state.submitted = True
-            update_data()
+            df=update_data()
+            df.to_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False) 
+            st.experimental_rerun()
+
+    
+            
+            
 nav_back,nav_forward,padding = st.columns([1,1,10])
 with nav_forward:
     forward=st.button("      Next       ", key="forward",on_click=index_to_pmid)   
