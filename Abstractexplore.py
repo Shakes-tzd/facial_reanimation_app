@@ -59,7 +59,7 @@ pmids=df['pmid'].to_list()
 my_list = pmids
 # sidebar = st.sidebar
 
-back_button,select, next_button,space = st.columns([1,2,1,10])
+back_button,select, next_button,abstr = st.columns([1,2,1,10])
 with back_button:
     st.write(' ')
     st.write(' ')
@@ -81,10 +81,6 @@ article_index=df[df['pmid'] == selected].index[0]
 
 patients = df['patients'].loc[article_index]
     
-    
-
-
-
 models = load_models()
 
 
@@ -96,14 +92,14 @@ doc = selected_model(text_input)
 anonymized_tokens = process_text(doc)
 height = int(len(text_input) * 0.5) + 10
 
-    # st.write('Expand to read the abstract')
-# st.write("###",doc_title)
 expander_title="Click to read: "+doc_title +" (Abstract)"
 
-# st.session_state.article_index=article_index
-
-
-
+with abstr:
+    st.write(' ')
+    st.write(' ')
+    with st.expander(expander_title):
+            # st.markdown(f"**{doc_title}**")
+            annotated_text(*anonymized_tokens)
 
 pmid = df['pmid'][df['pmid']== pmid_select].values[0]
 min_time_to_reinnervation = df['time_to_reinnervation_(min)'][df['pmid']== pmid_select].values[0]
@@ -118,7 +114,7 @@ with form:
     with st.form(key='Paper Details', clear_on_submit=True):
         # inp1, inp2, inp3, inp4 = st.columns(4)
         # with inp1:
-        patients_in = st.text_input('Patients', value=str(df['patients'].loc[article_index]))
+        patients_in = st.text_input('Patients', value=str(patients))
         age_in = st.text_input('Age', value=str(age))
         # with inp2:
         min_age_in = st.text_input('Min Age', value=str(min_age))
@@ -129,42 +125,20 @@ with form:
     # with inp4:
         min_follow_up_in = st.text_input('Min Follow up', value=str(min_follow_up))
         max_follow_up_in = st.text_input('Max Follow up', value=str(max_follow_up))
-        
         submitted=st.form_submit_button("Save",on_click=index_to_pmid)
     
-# df['link'] 
+# my_lit=pd.read_csv('./data/my_lit.csv')
+filename=f"{pmid}_sci_hub.pdf" #'10474465_sci_hub.pdf'#
+filelink='https://storage.googleapis.com/facial-reanimation.appspot.com/downloaded_articles/'+filename
+
 with article:        
     my_bar = st.progress(0)
     percent_complete=((st.session_state.indx)/len(pmids))
-    with st.expander(expander_title):
-        # st.markdown(f"**{doc_title}**")
-        annotated_text(*anonymized_tokens)
     my_bar.progress(percent_complete)
-    my_lit=pd.read_csv('./data/my_lit.csv')
-
-    filename=f"{pmid}_sci_hub.pdf" #'10474465_sci_hub.pdf'#
-    # import filename
-    filelink='https://storage.googleapis.com/facial-reanimation.appspot.com/downloaded_articles/'+filename
-
-    # df_links = pd.read_csv('pdf_file_links_2.csv')
-    # index = open("pdf_render.html").read() #.format(url=filelink, location=filename)
-    # index
-
+    
     link1=gen_html(filelink,filename)
-    # Func = open("link1.html","w")
-    # Func.write(link1)
-    # Func.close()
-
-    # st.markdown("""---""")    
-    # HtmlFile = open("link1.html", 'r', encoding='utf-8')
-    # source_code = HtmlFile.read() 
-    # print(source_code)
-    # components.html(source_code)
     try:
-        # file_link=df_links['link'][df_links['pmid']== pmid].values[0]
-        # file_link=file_link.replace('view?usp=drivesdk','preview')
-        # components.iframe(file_link,  height=1000)
-        components.html(link1, height=1000)
+        components.html(link1, height=810)
     except:
         st.markdown("# The full text is not available in the folder")
 

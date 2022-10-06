@@ -11,7 +11,7 @@ def gen_html(filelink,filename):
     </head>
     <!-- Customize page layout style according to your need and PDF file for best viewing experience -->
     <body style="margin: 0px 0 0 0px;">
-        <div id="adobe-dc-view" style="height: 1000px; ;"></div>
+        <div id="adobe-dc-view" style="height: 850px; ;"></div>
     <script src="https://documentservices.adobe.com/view-sdk/viewer.js"></script>
     <script type="text/javascript">
         document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
