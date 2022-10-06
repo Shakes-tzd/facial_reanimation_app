@@ -163,7 +163,7 @@ with article:
     
     link1=gen_html(filelink,filename)
     try:
-        components.html(link1, height=810)
+        components.html(link1, height=750)
     except:
         st.markdown("# The full text is not available in the folder")
 
