@@ -192,6 +192,7 @@ st.download_button(
    "text/csv",
    key='download-input_csv'
 )
+df
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
             <style>
