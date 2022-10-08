@@ -75,7 +75,7 @@ with next_button:
     st.write(' ')
     st.write(' ')
     next_article=st.button("      Next       ", key="next",on_click=next_index_to_pmid)
-    if st.session_state.indx == len(pmids)-1:
+    if st.session_state.indx == len(pmids)-2:
         next_article.disabled=True 
         
         
@@ -159,7 +159,7 @@ with form_col:
 nav_back,nav_forward,padding = st.columns([1,1,10])
 with nav_forward:
     forward=st.button("      Next       ", key="forward",on_click=index_to_pmid)
-    if st.session_state.indx == len(pmids)-1:
+    if st.session_state.indx == len(pmids)-2:
         forward.disabled=True   
 with nav_back:
     back=st.button("      Back       ", key="backward",on_click=back_index_to_pmid)
