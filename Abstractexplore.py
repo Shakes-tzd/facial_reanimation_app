@@ -50,10 +50,11 @@ def index_to_pmid():
     st.session_state.indx +=1 
     st.session_state.pmid_selection = pmids[st.session_state.indx]
 def next_index_to_pmid():
-    st.session_state.indx +=1 
-    st.session_state.pmid_selection =pmids[st.session_state.indx]
-    if st.session_state.indx == len(pmids)-1:
-        next_article.disabled=True 
+    if st.session_state.indx < len(pmids)-1:
+        st.session_state.indx +=1 
+        st.session_state.pmid_selection =pmids[st.session_state.indx]
+    
+        # next_article.disabled=True 
 def back_index_to_pmid():
     if st.session_state.indx > 0:
         st.session_state.indx -=1 
@@ -160,9 +161,8 @@ with form_col:
             
 nav_back,nav_forward,padding = st.columns([1,1,10])
 with nav_forward:
-    forward=st.button("      Next       ", key="forward",on_click=index_to_pmid,disabled=False)
-    if st.session_state.indx == len(pmids)-2:
-        forward.disabled=True   
+    forward=st.button("      Next       ", key="forward",on_click=index_to_pmid)
+   
 with nav_back:
     back=st.button("      Back       ", key="backward",on_click=back_index_to_pmid)
 # Paper_Details     
