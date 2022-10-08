@@ -134,8 +134,8 @@ form_col,article= st.columns([3,10])
 with form_col:
     percent_complete=((st.session_state.indx)/len(pmids))
     articles_remaining=len(pmids)-st.session_state.indx
-    st.metric(label="Completion", value=percent_complete, delta=articles_remaining,
-    delta_color="inverse")
+    st.metric(label="Completion", value=round(percent_complete*100), delta=-articles_remaining,
+    )
     
     with st.form(key='Paper_Details', clear_on_submit=True):
         pmid_in= pmid
