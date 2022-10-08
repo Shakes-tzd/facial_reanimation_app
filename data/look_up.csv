@@ -1,0 +1,11 @@
+﻿nerve_transfer_key,nerve_transfer_value,free_flap_key,free_flap_value,other_tissue_key,other_tissue_value,positive_outcome_key,positive_outcome_value,measuring_tool_key,measuring_tool_value,tool_category_key,tool_category_value
+None,0,None,0,None,0,None,0,None,0,Not Specified,0
+Cross Facial,1,Gracilis,1,Local Flap,1,Symmetry,1,Software,1,Subjective,1
+Masseteric,2,Other,2,Graft,2,Ability to Smile,2,Scale or Score or Grade,2,Objective,2
+Hypoglossal,3,,,Biomaterial,3,Commissure Excursion,3,Questionnaire or Surveys,3,Both,3
+Multiple,4,,,Undefined,4,Patient Satisfaction,4,Clinical Evaluation,4,,
+Other,5,,,,,Other,5,"Count or Measurement (length,radious,thickness,etc)",5,,
+Double Innervation,6,,,,,Function or Movement or Contraction,7,EMG or ENMG,6,,
+,,,,,,Comparison of Pre-OP & Post-OP Measuremetns,8,Other,7,,
+,,,,,,Multiple,9,Multiple,8,,
+,,,,,,,,Undefined,9,,

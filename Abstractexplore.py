@@ -64,7 +64,7 @@ def back_index_to_pmid():
 # get_data_from_csv(files[selected_source_file])
 
 
-df = get_data_from_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv')
+df = get_data_from_csv('./data/8-10-22_Facial-reanimation_data_extraction_with_time_to_reinervation_linkedDB.csv')
 pmids=df['pmid'].to_list()
 # my_list = pmids
 # sidebar = st.sidebar
@@ -179,7 +179,7 @@ with article:
         components.html(link1, height=750)
     except:
         st.markdown("# The full text is not available in the folder")
-
+components.iframe(src='https://docs.google.com/spreadsheets/d/1LlFmB-apPVuC7iBtO7_QxkVnyGXvNjIWB45H-0dTkWw/edit?usp=sharing', height=1000)
 
 st.write(pd.DataFrame(get_data()))
 file_to_download=pd.DataFrame(get_data())
