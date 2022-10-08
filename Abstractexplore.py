@@ -52,10 +52,13 @@ def index_to_pmid():
 def next_index_to_pmid():
     st.session_state.indx +=1 
     st.session_state.pmid_selection =pmids[st.session_state.indx]
+    if st.session_state.indx == len(pmids)-1:
+        next_article.disabled=True 
 def back_index_to_pmid():
     if st.session_state.indx > 0:
         st.session_state.indx -=1 
         st.session_state.pmid_selection =pmids[st.session_state.indx]
+        
 
 # get_data_from_csv(files[selected_source_file])
 
@@ -74,9 +77,8 @@ with back_button:
 with next_button:
     st.write(' ')
     st.write(' ')
-    next_article=st.button("      Next       ", key="next",on_click=next_index_to_pmid)
-    if st.session_state.indx == len(pmids)-2:
-        next_article.disabled=True 
+    next_article=st.button("      Next       ", key="next",on_click=next_index_to_pmid,disabled=False)
+    
         
         
         
@@ -158,7 +160,7 @@ with form_col:
             
 nav_back,nav_forward,padding = st.columns([1,1,10])
 with nav_forward:
-    forward=st.button("      Next       ", key="forward",on_click=index_to_pmid)
+    forward=st.button("      Next       ", key="forward",on_click=index_to_pmid,disabled=False)
     if st.session_state.indx == len(pmids)-2:
         forward.disabled=True   
 with nav_back:
