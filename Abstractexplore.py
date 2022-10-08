@@ -46,13 +46,13 @@ def update_data(): #df,pmid_in,patients_in, age_in, min_age_in, max_age_in, min_
     
 def index_to_pmid():
     # update_data()#df,pmid_in,patients_in, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in
-    
-    st.session_state.indx +=1 
-    st.session_state.pmid_selection = pmids[st.session_state.indx]
-def next_index_to_pmid():
     if st.session_state.indx < len(pmids)-1:
         st.session_state.indx +=1 
-        st.session_state.pmid_selection =pmids[st.session_state.indx]
+        st.session_state.pmid_selection = pmids[st.session_state.indx]
+# def next_index_to_pmid():
+#     if st.session_state.indx < len(pmids)-1:
+#         st.session_state.indx +=1 
+#         st.session_state.pmid_selection =pmids[st.session_state.indx]
     
         # next_article.disabled=True 
 def back_index_to_pmid():
@@ -78,7 +78,7 @@ with back_button:
 with next_button:
     st.write(' ')
     st.write(' ')
-    next_article=st.button("      Next       ", key="next",on_click=next_index_to_pmid,disabled=False)
+    next_article=st.button("      Next       ", key="next",on_click=index_to_pmid,disabled=False)
     
         
         
