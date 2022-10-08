@@ -74,7 +74,12 @@ with back_button:
 with next_button:
     st.write(' ')
     st.write(' ')
-    st.button("      Next       ", key="next",on_click=next_index_to_pmid)
+    next_article=st.button("      Next       ", key="next",on_click=next_index_to_pmid)
+    if st.session_state.indx == len(pmids)-1:
+        next_article.disabled=True 
+        
+        
+        
         
 with select:
     pmid_selection = st.selectbox('PMID' ,pmids,key='pmid_selection',on_change =  pmid_to_index)
@@ -127,6 +132,11 @@ max_follow_up= df['follow up max'][df['pmid']== pmid_selection].values[0]
 form_col,article= st.columns([3,10])
 
 with form_col:
+    percent_complete=((st.session_state.indx)/len(pmids))
+    articles_remaining=len(pmids)-st.session_state.indx
+    st.metric(label="Completion", value=percent_complete, delta=articles_remaining,
+    delta_color="inverse")
+    
     with st.form(key='Paper_Details', clear_on_submit=True):
         pmid_in= pmid
         patients = st.text_input('Patients', value=patients)
@@ -148,7 +158,9 @@ with form_col:
             
 nav_back,nav_forward,padding = st.columns([1,1,10])
 with nav_forward:
-    forward=st.button("      Next       ", key="forward",on_click=index_to_pmid)   
+    forward=st.button("      Next       ", key="forward",on_click=index_to_pmid)
+    if st.session_state.indx == len(pmids)-1:
+        forward.disabled=True   
 with nav_back:
     back=st.button("      Back       ", key="backward",on_click=back_index_to_pmid)
 # Paper_Details     
@@ -158,7 +170,7 @@ filelink='https://storage.googleapis.com/facial-reanimation.appspot.com/download
 
 with article:        
     my_bar = st.progress(0)
-    percent_complete=((st.session_state.indx)/len(pmids))
+    
     my_bar.progress(percent_complete)
     
     link1=gen_html(filelink,filename)
