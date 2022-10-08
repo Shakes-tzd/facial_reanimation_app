@@ -135,7 +135,7 @@ max_follow_up= df['follow up max'][df['pmid']== pmid_selection].values[0]
 form_col,article= st.columns([3,10])
 
 with form_col:
-    percent_complete=((st.session_state.indx)/len(pmids))
+    percent_complete=((st.session_state.indx)/(len(pmids)-1))
     articles_remaining=len(pmids)-st.session_state.indx-1
     st.metric(label="Completion", value=f"{round(percent_complete*100)}%", delta=-articles_remaining)
     
