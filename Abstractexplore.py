@@ -10,6 +10,17 @@ st.set_page_config(page_title="Facial Reanimation Article Explorer",
                    page_icon="📑", layout="wide")
 
 @st.cache(show_spinner=False, allow_output_mutation=True, suppress_st_warning=True)
+def load_data(source_file):
+    """Load data from a CSV file."""
+    return pd.read_csv(source_file)
+
+def update_data_entry(df, index, entry):
+    """Update a single entry in the DataFrame."""
+    for key, value in entry.items():
+        if key in df.columns:
+            df.at[index, key] = value
+    return df
+
 def get_data_from_csv(source_file):
     df = pd.read_csv(source_file)
     return df
