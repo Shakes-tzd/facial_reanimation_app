@@ -4,10 +4,103 @@ from annotated_text import annotated_text
 import streamlit.components.v1 as components
 from fr_modules.fr_text_analysis import load_models, process_text, resamble, map_entities
 from fr_modules.html_gen import gen_html
-
-# emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
+import spacy_streamlit
+from spacy_streamlit import visualize_ner, visualize_spans
+import spacy
+from spacy.matcher import PhraseMatcher
+from spacy.tokens import Span
+from spacy import displacy
 st.set_page_config(page_title="Facial Reanimation Article Explorer",
                    page_icon="📑", layout="wide")
+nlp = spacy.load('en_core_web_sm')
+
+# "G":['In this paper',"Methods:","Methods","METHODS","MATERIALS AND METHODS","MATERIALS AND METHODS:",
+#                  "MATERIALS AND METHODS","Results:","Results","RESULTS","Discussion:","Discussion",
+#                  "DISCUSSION","DISCUSSION:","discussion","discussion:","Discussion and Conclusion",
+#                  "Discussion and Conclusions","Discussion and conclusion","Discussion and conclusions",
+#                  "Discussion and Conclusions:","Discussion and Conclusion:","Discussion and conclusion:","Discussion and conclusions:","Discussion and Conclusions.","Discussion and Conclusion.","Discussion and conclusion.","Discussion and conclusions.","Discussion and Conclusions:","Discussion and Conclusion:","Discussion and conclusion:","Discussion and conclusions:","Discussion and Conclusions.","Discussion and Conclusion.","Discussion and conclusion.","Discussion and conclusions.","Discussion and Conclusions","Discussion and Conclusion","Discussion and conclusion","Discussion and conclusions","Discussion and Conclusions:","Discussion and Conclusion:","Discussion and conclusion:","Discussion and conclusions:","Discussion and Conclusions.","Discussion and Conclusion.","Discussion and conclusion.","Discussion and conclusions."],
+procedures={
+    "Exclude":['animal',"animals",'cadaver','cadaveric'],
+    "GEN":['transplant',"transfer",'anastomosis','transplantation'],
+"NT":['nerve graft','nerve transfer','facial nerve','facial nerve grafting',
+                   'nerve grafting','cable graft','nerve harvest'],
+"NT-CF":["cfng","cross-face", "cross facial", "cross face",
+            "cross-mental", "cross-facial", "cross-face nerve grafting"],
+"NT-M":["masseteric","masseteric nerve", "masseter nerve", "masseteric-to-facial",'trigeminal nerve','trigeminal','ipsilateral nerve'],
+"NT-H":["hypoglossal", "hypoglossal-to-facial",'ansa cervicalis','faciohypoglossal',"hypoglossal-facial nerve"],
+"NT-O":['posterior auricular nerve','muscle-nerve-muscle','great auricular nerve',"infracostal nerve",'sural nerve','deep temporal nerves',
+          'interposition nerve','spinal accessory nerve',
+          'mylohyoid nerve','suprascapular nerve','long throracic nerve',
+          'intercostal nerve','radial nerve', 'neuroanastomosis',
+          'homolateral eighth cranial nerve','intratemporal facial nerve','femoral cutaneous nerve',
+          'phrenic nerve','obturator nerve','thoracodorsal','thoracodorsal nerve','abducens nerve',
+          'vestibulocochlear nerve','long saphenous nerve graft','hemihypoglossal-facial nerve anastomosis',
+          'HHFA','faciohypoglossal','faciohypoglossal transposition','motor nerve'],
+ "FF":['free flap','free','muscle transplant','flap'],
+            
+            "FF-G":["gracilis muscle",'fgmt','gracilis-muscle','free gracilis-muscle','free gracilis'],
+ "FF-O":['free latissimus','fascia lata','sternocleidomastoid muscle','sternohyoid muscle','sternohyoid','free','free muscle',
+          'free muscle transfer','muscle as a donor','free muscle transplants','sartorius flap','sartorius',
+          'serratus anterior muscle','zmin and zmaj','free anterolateral thigh flap', 'anterolateral thigh flap',
+          'alt','lateral trapezius flap','latissimus dorsi','latissimus','omohyoid', 'pectoralis major','pectoralis minor',
+          'free platysma','platysma',' extensor digitorum brevis','adductor longus','biceps femoris','rectus femoris','rectus abdominis',
+          'teres major','trapezius','extensor digitorum','dual-vector flap','biceps femoris muscle','musculoseptal flap',
+          'peroneus brevis free flap','peroneus brevis','tensor fascia lata','fascial','fascia','abductor hallucis','palmaris longus tendon','palmaris longus']
+,
+ "OT-L":['regional muscle transposition','local muscle transfer','temporalis','temporalis flap','masseter','masseter flap',
+            'local flap','digastric','pedicle flap transfer','platysma myocutaneous flap',
+            'oris','obicularis oculi','masseter muscle transfer']}
+st.markdown("""
+            <style>
+                .block-container {
+                    padding-top: 1rem;
+                    padding-bottom: 1rem;
+                    padding-left: 5rem;
+                    padding-right: 5rem;
+                }
+            </style>
+           """, unsafe_allow_html=True)
+
+st.markdown("""<style>
+            .entity {
+   display:inline-block;
+}</style>""", unsafe_allow_html=True)
+def create_patterns(nlp, phrase_dict):
+    patterns = {}
+    for key, texts in phrase_dict.items():
+        patterns[key] = [nlp.make_doc(text.lower()) for text in texts]
+    return patterns
+
+def resolve_overlaps(matches, doc):
+    sorted_matches = sorted(matches, key=lambda m: (m[1], -m[2]))
+    resolved_entities = []
+    seen_tokens = set()
+
+    for match_id, start, end in sorted_matches:
+        if start in seen_tokens or any(token in seen_tokens for token in range(start, end)):
+            continue
+
+        resolved_entities.append(Span(doc, start, end, label=nlp.vocab.strings[match_id]))
+        seen_tokens.update(range(start, end))
+
+    return resolved_entities
+
+def process_text(text, nlp, procedures):
+    patterns = create_patterns(nlp, procedures)
+    matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
+    for key, pattern in patterns.items():
+        matcher.add(key, pattern)
+    
+    doc = nlp(text)
+    matches = matcher(doc)
+    new_ents = resolve_overlaps(matches, doc)
+    doc.ents = new_ents
+    return doc
+
+# models = ["en_core_web_sm", "en_core_web_md"]
+
+# emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
+
 
 @st.cache_data #(show_spinner=False, allow_output_mutation=True, suppress_st_warning=True)
 def load_data(source_file):
@@ -85,24 +178,15 @@ with st.sidebar:
 # with back_button:
 #     st.write(' ')
 #     st.write(' ')
-    bck,nxt=st.columns([1,1])
+    bck,pumedid,nxt=st.columns([1,2,1])
     with bck:
         st.button("Back", key="back",on_click=back_index_to_pmid)
     with nxt:
         next_article=st.button("Next", key="next",on_click=index_to_pmid,disabled=False)
-    
-    pmid_selection = st.selectbox('PMID' ,pmids,key='pmid_selection',on_change =  pmid_to_index)
+    with pumedid:
+        pmid_selection = st.selectbox('PMID' ,pmids,key='pmid_selection',on_change =  pmid_to_index,label_visibility="hidden")    
         
-# with next_button:
-#     st.write(' ')
-#     st.write(' ')
 
-    
-        
-        
-        
-        
-# with select:
     
     
 #find index of selected pmid    
@@ -123,7 +207,8 @@ doc_title = df['title'].loc[article_index]
 text_input = df['abstract'].loc[article_index]
 selected_model = models["en"]
 doc = selected_model(text_input)
-anonymized_tokens = process_text(doc)
+# docOut = nlp(doc)
+# anonymized_tokens = process_text(doc)
 height = int(len(text_input) * 0.5) + 10
 
 expander_title="Click to read: "+ doc_title +" (Abstract)"
@@ -133,14 +218,28 @@ expander_title="Click to read: "+ doc_title +" (Abstract)"
 # st.write(' ')
 # with st.expander(expander_title):
 st.markdown(f"**{doc_title}**")
-annotated_text(*anonymized_tokens)
-pmid =pmid_selection# df['pmid'][df['pmid']== pmid_selection].values[0]
-# if 'submitted' not in st.session_state:
-#     st.session_state['submitted' ]=False
-# if st.session_state.submitted:
-#         df=update_data()
-#         df.to_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False) 
-#         st.session_state['submitted' ]=False  
+# annotated_text(*anonymized_tokens)
+# spacy_streamlit.visualize(models, text_input)
+v_abstract= process_text(doc, nlp, procedures)
+processed_html =displacy.render(v_abstract, style="ent", jupyter=False, options={
+        "colors": {
+            "NT": "#BEA375",
+            "NT-CF": "#AC8336",
+            "NT-M": "#E1785C",
+            "NT-H": "#B88965",
+            "NT-O": "#E18B58",
+            "FF": "#D8588C",
+            "FF-G": "#3AC1E6",
+            "FF-O": "#b0e0e6",
+            "OT-L": "#5851A5",
+            "Exclude":"red",
+            "GEN":"yellow",
+        }
+        })
+    # processed_html
+st.markdown(processed_html, unsafe_allow_html=True)
+# visualize_spans(docOut, spans_key="job_role", displacy_options={"colors": {"CEO": "#09a3d5"}})
+pmid =pmid_selection
 
 
 min_time_to_reinnervation = df['time_to_reinnervation_(min)'][df['pmid']== pmid_selection].values[0]
@@ -176,7 +275,7 @@ with st.form(key='Paper_Details', clear_on_submit=True):
     
             
             
-nav_back,nav_forward,padding = st.columns([1,1,10])
+nav_back,nav_forward,padding = st.columns([1,1,8])
 with nav_forward:
     forward=st.button("Next", key="forward",on_click=index_to_pmid)
    
@@ -199,9 +298,9 @@ filelink='https://storage.googleapis.com/facial-reanimation.appspot.com/download
 #         st.markdown("# The full text is not available in the folder")
 # components.iframe(src='https://docs.google.com/spreadsheets/d/1LlFmB-apPVuC7iBtO7_QxkVnyGXvNjIWB45H-0dTkWw/edit?usp=sharing', height=1000)
 
-st.write(pd.DataFrame(get_data()))
+# st.write(pd.DataFrame(get_data()))
 file_to_download=pd.DataFrame(get_data())
-@st.cache
+# @st.cache
 def convert_df(df):
    return df.to_csv().encode('utf-8')
 
