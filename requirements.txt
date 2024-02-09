@@ -4,3 +4,4 @@ spacy
 st-annotated-text
 pyautogui
 firebase_admin
+spacy_streamlit
