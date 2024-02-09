@@ -176,15 +176,19 @@ with st.sidebar:
     # st.[element_name]
 # buffer,back_button,select, next_button,buffer = st.columns([3,1,2,1,3])
 # with back_button:
-#     st.write(' ')
-#     st.write(' ')
+    # st.write(' ')
+    # st.write(' ')
     bck,pumedid,nxt=st.columns([1,2,1])
     with bck:
+        st.write(' ')
+        st.write(' ')
         st.button("Back", key="back",on_click=back_index_to_pmid)
     with nxt:
+        st.write(' ')
+        st.write(' ')
         next_article=st.button("Next", key="next",on_click=index_to_pmid,disabled=False)
     with pumedid:
-        pmid_selection = st.selectbox('PMID' ,pmids,key='pmid_selection',on_change =  pmid_to_index,label_visibility="hidden")    
+        pmid_selection = st.selectbox('PMID' ,pmids,key='pmid_selection',on_change =  pmid_to_index)    
         
 
     
@@ -217,7 +221,8 @@ expander_title="Click to read: "+ doc_title +" (Abstract)"
 # st.write(' ')
 # st.write(' ')
 # with st.expander(expander_title):
-st.markdown(f"**{doc_title}**")
+st.subheader(doc_title)
+# st.markdown(f"### {doc_title}")
 # annotated_text(*anonymized_tokens)
 # spacy_streamlit.visualize(models, text_input)
 v_abstract= process_text(doc, nlp, procedures)
@@ -256,21 +261,22 @@ percent_complete=((st.session_state.indx)/(len(pmids)-1))
 articles_remaining=len(pmids)-st.session_state.indx-1
 # st.metric(label="Completion", value=f"{round(percent_complete*100)}%", delta=-articles_remaining)
 
-with st.form(key='Paper_Details', clear_on_submit=True):
-    pmid_in= pmid
-    patients = st.text_input('Patients', value=patients)
-    age = st.text_input('Age', value=age)
-    min_age = st.text_input('Min Age', value=min_age)
-    max_age = st.text_input('Max Age', value=max_age)
-    min_time_to_reinnervation = st.text_input('Min Time to Reinnervation', value=min_time_to_reinnervation)
-    max_time_to_reinnervation = st.text_input('Max Time to Reinnervation', value=max_time_to_reinnervation)
-    min_follow_up = st.text_input('Min Follow up', value=min_follow_up)
-    max_follow_up = st.text_input('Max Follow up', value=max_follow_up)
-    submitted=st.form_submit_button("Save")
-    if submitted:
-        df=update_data()
-        df.to_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False) 
-        st.experimental_rerun()
+with st.sidebar:
+    with st.form(key='Paper_Details', clear_on_submit=True):
+        pmid_in= pmid
+        patients = st.text_input('Patients', value=patients)
+        age = st.text_input('Age', value=age)
+        min_age = st.text_input('Min Age', value=min_age)
+        max_age = st.text_input('Max Age', value=max_age)
+        min_time_to_reinnervation = st.text_input('Min Time to Reinnervation', value=min_time_to_reinnervation)
+        max_time_to_reinnervation = st.text_input('Max Time to Reinnervation', value=max_time_to_reinnervation)
+        min_follow_up = st.text_input('Min Follow up', value=min_follow_up)
+        max_follow_up = st.text_input('Max Follow up', value=max_follow_up)
+        submitted=st.form_submit_button("Save")
+        if submitted:
+            df=update_data()
+            df.to_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False) 
+            st.experimental_rerun()
 
     
             
