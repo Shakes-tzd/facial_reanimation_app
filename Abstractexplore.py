@@ -9,7 +9,7 @@ from fr_modules.html_gen import gen_html
 st.set_page_config(page_title="Facial Reanimation Article Explorer",
                    page_icon="📑", layout="wide")
 
-@st.cache(show_spinner=False, allow_output_mutation=True, suppress_st_warning=True)
+@st.cache_data #(show_spinner=False, allow_output_mutation=True, suppress_st_warning=True)
 def load_data(source_file):
     """Load data from a CSV file."""
     return pd.read_csv(source_file)
@@ -28,7 +28,7 @@ def get_data_from_csv(source_file):
 #         st.session_state.submitted = True
 def pmid_to_index():
     st.session_state.indx = pmids.index(st.session_state.pmid_selection)
-@st.cache(allow_output_mutation=True)
+@st.cache_data#(allow_output_mutation=True)
 def get_data():
     return []
 def update_data(): #df,pmid_in,patients_in, age_in, min_age_in, max_age_in, min_time_to_reinnervation_in, max_time_to_reinnervation_in, min_follow_up_in, max_follow_up_in
@@ -79,24 +79,31 @@ df = get_data_from_csv('./data/8-10-22_Facial-reanimation_data_extraction_with_t
 pmids=df['pmid'].to_list()
 # my_list = pmids
 # sidebar = st.sidebar
-
-back_button,select, next_button,abstr = st.columns([1,2,1,10])
-with back_button:
-    st.write(' ')
-    st.write(' ')
-    st.button("      Back       ", key="back",on_click=back_index_to_pmid)
+with st.sidebar:
+    # st.[element_name]
+# buffer,back_button,select, next_button,buffer = st.columns([3,1,2,1,3])
+# with back_button:
+#     st.write(' ')
+#     st.write(' ')
+    bck,nxt=st.columns([1,1])
+    with bck:
+        st.button("Back", key="back",on_click=back_index_to_pmid)
+    with nxt:
+        next_article=st.button("Next", key="next",on_click=index_to_pmid,disabled=False)
+    
+    pmid_selection = st.selectbox('PMID' ,pmids,key='pmid_selection',on_change =  pmid_to_index)
         
-with next_button:
-    st.write(' ')
-    st.write(' ')
-    next_article=st.button("      Next       ", key="next",on_click=index_to_pmid,disabled=False)
+# with next_button:
+#     st.write(' ')
+#     st.write(' ')
+
     
         
         
         
         
-with select:
-    pmid_selection = st.selectbox('PMID' ,pmids,key='pmid_selection',on_change =  pmid_to_index)
+# with select:
+    
     
 #find index of selected pmid    
 
@@ -121,12 +128,12 @@ height = int(len(text_input) * 0.5) + 10
 
 expander_title="Click to read: "+ doc_title +" (Abstract)"
 
-with abstr:
-    st.write(' ')
-    st.write(' ')
-    with st.expander(expander_title):
-            # st.markdown(f"**{doc_title}**")
-            annotated_text(*anonymized_tokens)
+
+# st.write(' ')
+# st.write(' ')
+# with st.expander(expander_title):
+st.markdown(f"**{doc_title}**")
+annotated_text(*anonymized_tokens)
 pmid =pmid_selection# df['pmid'][df['pmid']== pmid_selection].values[0]
 # if 'submitted' not in st.session_state:
 #     st.session_state['submitted' ]=False
@@ -143,54 +150,54 @@ min_age= df['min age'][df['pmid']== pmid_selection].values[0]
 max_age= df['max age'][df['pmid']== pmid_selection].values[0]
 min_follow_up= df['follow up min'][df['pmid']== pmid_selection].values[0]
 max_follow_up= df['follow up max'][df['pmid']== pmid_selection].values[0]
-form_col,article= st.columns([3,10])
+# form_col,article= st.columns([3,10])
 
-with form_col:
-    percent_complete=((st.session_state.indx)/(len(pmids)-1))
-    articles_remaining=len(pmids)-st.session_state.indx-1
-    st.metric(label="Completion", value=f"{round(percent_complete*100)}%", delta=-articles_remaining)
-    
-    with st.form(key='Paper_Details', clear_on_submit=True):
-        pmid_in= pmid
-        patients = st.text_input('Patients', value=patients)
-        age = st.text_input('Age', value=age)
-        min_age = st.text_input('Min Age', value=min_age)
-        max_age = st.text_input('Max Age', value=max_age)
-        min_time_to_reinnervation = st.text_input('Min Time to Reinnervation', value=min_time_to_reinnervation)
-        max_time_to_reinnervation = st.text_input('Max Time to Reinnervation', value=max_time_to_reinnervation)
-        min_follow_up = st.text_input('Min Follow up', value=min_follow_up)
-        max_follow_up = st.text_input('Max Follow up', value=max_follow_up)
-        submitted=st.form_submit_button("Save")
-        if submitted:
-            df=update_data()
-            df.to_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False) 
-            st.experimental_rerun()
+# with form_col:
+percent_complete=((st.session_state.indx)/(len(pmids)-1))
+articles_remaining=len(pmids)-st.session_state.indx-1
+# st.metric(label="Completion", value=f"{round(percent_complete*100)}%", delta=-articles_remaining)
+
+with st.form(key='Paper_Details', clear_on_submit=True):
+    pmid_in= pmid
+    patients = st.text_input('Patients', value=patients)
+    age = st.text_input('Age', value=age)
+    min_age = st.text_input('Min Age', value=min_age)
+    max_age = st.text_input('Max Age', value=max_age)
+    min_time_to_reinnervation = st.text_input('Min Time to Reinnervation', value=min_time_to_reinnervation)
+    max_time_to_reinnervation = st.text_input('Max Time to Reinnervation', value=max_time_to_reinnervation)
+    min_follow_up = st.text_input('Min Follow up', value=min_follow_up)
+    max_follow_up = st.text_input('Max Follow up', value=max_follow_up)
+    submitted=st.form_submit_button("Save")
+    if submitted:
+        df=update_data()
+        df.to_csv('./data/30-09-22_Facial-reanimation_data_time-to-reinnervation_v0002.csv', index=False) 
+        st.experimental_rerun()
 
     
             
             
 nav_back,nav_forward,padding = st.columns([1,1,10])
 with nav_forward:
-    forward=st.button("      Next       ", key="forward",on_click=index_to_pmid)
+    forward=st.button("Next", key="forward",on_click=index_to_pmid)
    
 with nav_back:
-    back=st.button("      Back       ", key="backward",on_click=back_index_to_pmid)
+    back=st.button("Back", key="backward",on_click=back_index_to_pmid)
 # Paper_Details     
 # my_lit=pd.read_csv('./data/my_lit.csv')
 filename=f"{pmid}_sci_hub.pdf" #'10474465_sci_hub.pdf'#
 filelink='https://storage.googleapis.com/facial-reanimation.appspot.com/downloaded_articles/'+filename
 
-with article:        
-    my_bar = st.progress(0)
+# with article:        
+#     my_bar = st.progress(0)
     
-    my_bar.progress(percent_complete)
+#     my_bar.progress(percent_complete)
     
-    link1=gen_html(filelink,filename)
-    try:
-        components.html(link1, height=750)
-    except:
-        st.markdown("# The full text is not available in the folder")
-components.iframe(src='https://docs.google.com/spreadsheets/d/1LlFmB-apPVuC7iBtO7_QxkVnyGXvNjIWB45H-0dTkWw/edit?usp=sharing', height=1000)
+#     link1=gen_html(filelink,filename)
+#     try:
+#         components.html(link1, height=750)
+#     except:
+#         st.markdown("# The full text is not available in the folder")
+# components.iframe(src='https://docs.google.com/spreadsheets/d/1LlFmB-apPVuC7iBtO7_QxkVnyGXvNjIWB45H-0dTkWw/edit?usp=sharing', height=1000)
 
 st.write(pd.DataFrame(get_data()))
 file_to_download=pd.DataFrame(get_data())
